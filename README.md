@@ -20,7 +20,11 @@ plots only.
 ## Run it
 
 ```bash
-python scripts/export_snapshot.py
+python scripts/export_snapshot.py               # standard library only
+py -3.11 -m venv .venv                          # then, for the analysis:
+.venv/Scripts/activate                          # Windows; on macOS or Linux: source .venv/bin/activate
+pip install -r requirements.txt
+jupyter lab
 ```
 
 It reads the platform's databases read-only and writes `data/snapshot.sqlite` (about 690 MB, not in git):
