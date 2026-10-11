@@ -1,0 +1,12 @@
+# The snapshot, frames, weights and runs stay on this disk
+data/
+frames/
+models/
+mlruns/
+mlartifacts/
+*.sqlite
+*.sqlite.tmp
+
+.venv/
+__pycache__/
+.ipynb_checkpoints/
