@@ -4,8 +4,9 @@ Can you tell from a short video alone, before it is posted, whether people will 
 
 ## The data
 
-About 156,000 TikTok videos from 246 creators, plus 25,000 YouTube videos from 43, collected for my own
-content platform. The counts were fetched between July and October 2026. For each video:
+About 247,000 TikTok videos from 320 creators, plus 26,000 YouTube videos from 43, collected for my own
+content platform. 156,000 of the TikTok videos have counts, fetched between July and October 2026; the other
+91,000 have everything else but no counts yet (trap 6). For each video:
 
 - **Counts:** views, likes, comments, shares and saves, measured on one or more dates. TikTok reports shares;
   YouTube's API returns none, so the share-rate work is TikTok only.
@@ -22,13 +23,14 @@ plots only.
 python scripts/export_snapshot.py
 ```
 
-It reads the platform's databases read-only and writes `data/snapshot.sqlite` (about 460 MB, not in git):
+It reads the platform's databases read-only and writes `data/snapshot.sqlite` (about 690 MB, not in git):
 
 | Table | One row per | Holds |
 |---|---|---|
-| `videos` | video | counts, caption, published and fetched dates, the text fields |
+| `videos` | video | counts, caption, published and fetched dates, the text fields; `has_stats = 0` when there are no counts |
 | `snapshots` | video and date | the same counts measured again later |
 | `files` | video | where the clip and its poster frame are, and whether they still exist |
+| `stat_runs` | creator | the last counts fetch: when, how many videos it saw and how many it matched |
 | `export_info` | key | when and from where the snapshot was made |
 
 ## Traps to handle before any model
@@ -44,6 +46,10 @@ It reads the platform's databases read-only and writes `data/snapshot.sqlite` (a
    on older, test on newer), and test separately on creators the model never saw.
 5. **Model-made labels.** The scene descriptions and on-screen text came from a vision-language model, not from
    people. They are features, not ground truth.
+6. **Missing counts.** 90,889 TikTok videos from 188 creators have no counts. Almost all of it is per creator,
+   not per video: 33 creators were never fetched (27,373 videos), the last fetch for 107 returned nothing (47,420),
+   and for 48 it returned only part of the channel (16,096). Check whether those creators differ from the rest
+   before dropping them, and re-export after the counts are fetched again.
 
 ## Plan
 

@@ -11,15 +11,19 @@ The flywheel is found at FLYWHEEL_DIR if that is set, else C:/dev/career/prsnl-c
 Standard library only, so it runs on any Python 3.10+ without a virtual environment.
 
 Tables written:
-  videos      one row per TikTok/YouTube video with its counts, caption and AI notes
+  videos      one row per TikTok/YouTube video with its counts, caption and AI notes;
+              videos the platform holds notes for but never got counts for are kept,
+              with has_stats = 0 and empty counts
   snapshots   repeated measurements of the same videos (counts at several dates)
   files       where each video's file and poster frame are, and whether they still exist
+  stat_runs   the last counts fetch per creator: how many videos it saw and matched
   export_info when the snapshot was made, from where, and the row counts
 """
 
 from __future__ import annotations
 
 import os
+import re
 import sqlite3
 import sys
 from datetime import datetime, timezone
@@ -54,6 +58,15 @@ NOTES_COLUMNS = [
     "description", "is_wordless_verified",
 ]
 RETIRED_COLUMNS = ["username", "platform", "file_name", "retired_at", "reason"]
+STAT_RUN_COLUMNS = ["username", "platform", "fetched_at", "videos_seen", "videos_matched", "error"]
+
+# yt-dlp ends every TikTok and YouTube file name with "[<video id>]".
+SOURCE_ID = re.compile(r"\[([0-9A-Za-z_-]+)\][^\[]*$")
+
+
+def source_id(file_name: str) -> str:
+    match = SOURCE_ID.search(file_name or "")
+    return match.group(1) if match else file_name
 
 
 def open_read_only(path: Path) -> sqlite3.Connection:
@@ -150,6 +163,8 @@ def main() -> None:
         stats, f"SELECT {', '.join(STATS_COLUMNS)} FROM video_stats", dest,
         f"INSERT INTO stats VALUES ({', '.join('?' * len(STATS_COLUMNS))})",
     )
+    # The notes-without-counts lookup below runs once per notes row.
+    dest.execute("CREATE INDEX stats_file ON stats (username, platform, file_name)")
     dest.execute(f"CREATE TABLE snapshots ({', '.join(SNAPSHOT_COLUMNS)})")
     n_snapshots = copy_rows(
         stats, f"SELECT {', '.join(SNAPSHOT_COLUMNS)} FROM video_stat_snapshots ORDER BY id", dest,
@@ -168,28 +183,55 @@ def main() -> None:
         notes, f"SELECT {', '.join(RETIRED_COLUMNS)} FROM retired_videos", dest,
         f"INSERT OR REPLACE INTO retired VALUES ({', '.join('?' * len(RETIRED_COLUMNS))})",
     )
+    dest.execute(f"CREATE TABLE stat_runs ({', '.join(STAT_RUN_COLUMNS)})")
+    copy_rows(
+        stats, f"SELECT {', '.join(STAT_RUN_COLUMNS)} FROM channel_stat_runs", dest,
+        f"INSERT INTO stat_runs VALUES ({', '.join('?' * len(STAT_RUN_COLUMNS))})",
+    )
     stats.close()
     notes.close()
 
+    dest.create_function("source_id", 1, source_id, deterministic=True)
     dest.execute(
-        """CREATE TABLE videos AS
-           SELECT s.platform, s.username, s.video_id, s.file_name, s.title, s.published_at,
-                  s.duration_seconds, s.fetched_at, s.view_count, s.like_count, s.comment_count,
-                  s.share_count, s.save_count,
-                  n.transcript, n.transcript_en,
-                  n.hook_text_en AS hook_en, n.body_text_en AS body_en, n.payoff_text_en AS payoff_en,
-                  n.onscreen_text_en, n.scene_description_en, n.description,
-                  n.is_wordless_verified AS is_wordless,
-                  n.file_name IS NOT NULL AS has_notes
-           FROM stats s
-           LEFT JOIN notes n
-             ON n.username = s.username AND n.platform = s.platform AND n.file_name = s.file_name"""
+        """CREATE TABLE videos (
+            platform TEXT, username TEXT, video_id TEXT, file_name TEXT, title TEXT,
+            published_at TEXT, duration_seconds INTEGER, fetched_at TEXT,
+            view_count INTEGER, like_count INTEGER, comment_count INTEGER,
+            share_count INTEGER, save_count INTEGER,
+            transcript TEXT, transcript_en TEXT, hook_en TEXT, body_en TEXT, payoff_en TEXT,
+            onscreen_text_en TEXT, scene_description_en TEXT, description TEXT,
+            is_wordless INTEGER, has_notes INTEGER, has_stats INTEGER,
+            PRIMARY KEY (platform, username, video_id))"""
+    )
+    text_columns = """n.transcript, n.transcript_en, n.hook_text_en, n.body_text_en, n.payoff_text_en,
+                      n.onscreen_text_en, n.scene_description_en, n.description, n.is_wordless_verified"""
+    dest.execute(
+        f"""INSERT INTO videos
+            SELECT s.platform, s.username, s.video_id, s.file_name, s.title, s.published_at,
+                   s.duration_seconds, s.fetched_at, s.view_count, s.like_count, s.comment_count,
+                   s.share_count, s.save_count, {text_columns},
+                   n.file_name IS NOT NULL, 1
+            FROM stats s
+            LEFT JOIN notes n
+              ON n.username = s.username AND n.platform = s.platform AND n.file_name = s.file_name"""
+    )
+    # Videos with notes but no counts: the creator was never fetched, or the fetch no
+    # longer returned them. Instagram is left out, because it never has counts here.
+    # OR IGNORE keeps the first of two notes rows that share one video id.
+    dest.execute(
+        f"""INSERT OR IGNORE INTO videos
+            SELECT n.platform, n.username, source_id(n.file_name), n.file_name, NULL, NULL,
+                   NULL, NULL, NULL, NULL, NULL, NULL, NULL, {text_columns}, 1, 0
+            FROM notes n
+            WHERE n.platform IN ('tiktok', 'youtube')
+              AND NOT EXISTS (
+                SELECT 1 FROM stats s
+                WHERE s.username = n.username AND s.platform = n.platform AND s.file_name = n.file_name)"""
     )
     build_files_table(dest)
     dest.execute("DROP TABLE stats")
     dest.execute("DROP TABLE notes")
     dest.execute("DROP TABLE retired")
-    dest.execute("CREATE UNIQUE INDEX videos_key ON videos (platform, username, video_id)")
     dest.execute("CREATE INDEX snapshots_key ON snapshots (platform, username, video_id)")
 
     info = {
@@ -204,7 +246,7 @@ def main() -> None:
     dest.commit()
 
     summary = dest.execute(
-        """SELECT v.platform, COUNT(*), SUM(v.has_notes), SUM(v.transcript_en <> ''),
+        """SELECT v.platform, COUNT(*), SUM(v.has_stats), SUM(v.has_notes), SUM(v.transcript_en <> ''),
                   SUM(v.share_count > 0), SUM(f.has_video), SUM(f.has_poster),
                   SUM(f.has_video OR f.has_poster), COUNT(DISTINCT v.username)
            FROM videos v JOIN files f USING (platform, username, video_id)
@@ -215,10 +257,10 @@ def main() -> None:
     os.replace(tmp_path, out_path)
 
     print(f"Wrote {out_path} ({out_path.stat().st_size / 1e6:.0f} MB) from {FLYWHEEL_DIR}")
-    print(f"{'platform':<10}{'videos':>9}{'notes':>9}{'text_en':>9}{'shares':>9}"
+    print(f"{'platform':<10}{'videos':>9}{'counts':>9}{'notes':>9}{'text_en':>9}{'shares':>9}"
           f"{'video':>9}{'poster':>9}{'either':>9}{'creators':>10}")
     for row in summary:
-        print(f"{row[0]:<10}" + "".join(f"{v:>9}" for v in row[1:8]) + f"{row[8]:>10}")
+        print(f"{row[0]:<10}" + "".join(f"{v:>9}" for v in row[1:9]) + f"{row[9]:>10}")
 
 
 if __name__ == "__main__":
