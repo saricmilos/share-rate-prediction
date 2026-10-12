@@ -44,8 +44,11 @@ It reads the platform's databases read-only and writes `data/snapshot.sqlite` (a
 2. **Video age.** A clip fetched two days after posting hasn't finished collecting shares. `published_at` and
    `fetched_at` give its age; `snapshots` shows how much the counts still move.
 3. **Survivorship.** The platform retires old clips but keeps each channel's top clips by share rate, so whether
-   a file still exists depends on the target. The `files` columns are for finding pixels, never features, and a
-   model trained only on clips that still have their file learns from winners.
+   a file still exists depends on the target (stage 1 measured it: kept clips beat their creator's median 55% of
+   the time, retired ones 43%). The `files` columns are for finding pixels, never features, and a model trained
+   only on clips that still have their file learns from winners. Every image must also come out of one pipeline:
+   retired clips have only a poster (taken about 1 s in, 480 px, JPEG quality 82), so kept clips' frames must be
+   made the same way, or compression artefacts give away which clips were retired.
 4. **Leaky splits.** A random split puts one creator's near-identical videos on both sides. Split by time (train
    on older, test on newer), and test separately on creators the model never saw.
 5. **Model-made labels.** The scene descriptions and on-screen text came from a vision-language model, not from
@@ -62,9 +65,21 @@ Every model has to beat the one above it, on the same split.
 | Stage | What | Status |
 |---|---|---|
 | 0. Data | Read-only snapshot out of the platform | Done |
-| 1. EDA and target | Share-rate distribution, per-creator normalisation, the age effect, the survivorship check | |
+| 1. EDA and target | Share-rate distribution, per-creator normalisation, the age effect, the survivorship check | Done: [notebook](notebooks/01_eda_target.ipynb) |
 | 2. Baselines | The creator's own history; length and posting hour | |
 | 3. Text | Transcript and on-screen text | |
 | 4. Image | The poster frame through a pretrained image model, then fine-tuned on a rented GPU | |
 | 5. Combined | Frames and text together, every run logged in MLflow | |
 | 6. Demo | A FastAPI `/predict` endpoint in Docker | |
+
+## What stage 1 found
+
+- **The creator matters more than the video.** The creator alone explains 38% of the variance in log share
+  rate, so every video is compared with its own creator.
+- **Share rate drifted.** The same creators' median share rate rose about 4.7× between their 2022 and 2026
+  videos. The baseline is therefore the median of the creator's previous 30 videos, not their lifetime.
+- **The rate settles fast.** Young videos keep gaining views, but their share rate barely moves after the first
+  two weeks.
+- **The target:** `lift` = log share rate minus that baseline, for 146,431 videos from 234 creators. The baseline
+  alone explains 52% of the variance; that is the bar. `breakout` (at least twice the baseline) is true for 24%.
+  The target's distribution is the same in train, validation and test.
