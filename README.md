@@ -58,6 +58,9 @@ It reads the platform's databases read-only and writes `data/snapshot.sqlite` (a
    and for 48 it returned only part of the channel (16,096). Check whether those creators differ from the rest
    before dropping them, and re-export after the counts are fetched again.
 
+[docs/why-the-rules.md](docs/why-the-rules.md) explains why each of these rules exists, with the splits'
+counts, and what would give a better result.
+
 ## Plan
 
 Every model has to beat the one above it, on the same split.
