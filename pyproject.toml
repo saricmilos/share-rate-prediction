@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sharerate"
-version = "0.2.0"
+version = "0.3.0"
 description = "Will it be shared? A short video's share rate against its creator's own recent median."
 requires-python = ">=3.11"
 dependencies = ["numpy", "pandas", "scipy", "scikit-learn"]

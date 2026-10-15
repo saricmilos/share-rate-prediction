@@ -8,3 +8,7 @@ scipy
 scikit-learn
 pytest
 -e .
+# Stage 3 (text): sentence embeddings on the CPU. Install the small CPU build of torch first:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+torch
+sentence-transformers
