@@ -108,3 +108,21 @@ def test_b0_against_itself_on_validation(name):
     table = paired_creator_bootstrap(metric, rows.lift, {"B0": b0, "B0 again": b0.copy()}, rows.creator,
                                      lower_is_better=lower, n_boot=100)
     assert (table[["gain", "gain_low", "gain_high"]].to_numpy() == 0).all()
+
+
+@pytest.mark.parametrize("rounding", [None, 1])  # 1 decimal: many tied predictions
+def test_auc_and_average_precision_match_sklearn(rounding):
+    from sklearn.metrics import average_precision_score, roc_auc_score
+
+    from sharerate.metrics import pr_auc, roc_auc
+
+    lift, creator = made_up()
+    pred = 0.5 * lift + np.random.default_rng(5).normal(0, 0.3, len(lift))
+    if rounding is not None:
+        pred = pred.round(rounding)
+    weights = np.random.default_rng(6).integers(0, 4, size=(5, creator.max() + 1)).astype(float)
+    hit = lift >= LOG2
+    for w, ours_auc, ours_ap in zip(weights, roc_auc(lift, pred, creator, weights),
+                                    pr_auc(lift, pred, creator, weights)):
+        assert ours_auc == pytest.approx(roc_auc_score(hit, pred, sample_weight=w[creator]), rel=1e-12)
+        assert ours_ap == pytest.approx(average_precision_score(hit, pred, sample_weight=w[creator]), rel=1e-12)

@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import numpy as np
 from scipy import stats
-from sklearn.metrics import average_precision_score, roc_auc_score
 
 LOG2 = float(np.log10(2))
 MIN_VIDEOS = 20  # within-creator metrics use creators with at least this many videos in the rows scored
@@ -53,16 +52,45 @@ def spearman_within(lift, pred, creator, weights, min_videos=MIN_VIDEOS):
 
 def roc_auc(lift, pred, creator, weights):
     """ROC-AUC of the prediction as a breakout score, over all rows: the chance that a random breakout scores
-    above a random non-breakout, ties counting half. A constant score gets 0.5."""
-    hit = lift >= LOG2
-    # Integer sample weights give the same curve as copying the rows, so this is the AUC of the replicate.
-    return np.array([roc_auc_score(hit, pred, sample_weight=w[creator]) for w in weights])
+    above a random non-breakout, ties counting half. A constant score gets 0.5.
+
+    Computed from that definition, so each replicate costs two bincounts (sklearn's `roc_auc_score` with the
+    same weights gives the same number, 25 times slower; tests/test_bootstrap.py checks they agree).
+    """
+    order = np.argsort(pred, kind="stable")  # lowest prediction first
+    level = _tie_levels(pred[order])  # equal predictions share a level
+    hit = (lift[order] >= LOG2).astype(float)
+    owner = creator[order]
+    out = np.empty(len(weights))
+    for r, w in enumerate(weights):
+        row_weight = w[owner]  # a creator drawn w times counts w times
+        breakouts = np.bincount(level, row_weight * hit)  # at each level
+        others = np.bincount(level, row_weight * (1 - hit))
+        below = np.cumsum(others) - others  # non-breakouts strictly below each level
+        # Each breakout beats the non-breakouts below its level, and ties with half of those at its level.
+        out[r] = (breakouts * (below + others / 2)).sum() / (breakouts.sum() * others.sum())
+    return out
 
 
 def pr_auc(lift, pred, creator, weights):
-    """Average precision of the prediction as a breakout score. A constant score gets the base rate."""
-    hit = lift >= LOG2
-    return np.array([average_precision_score(hit, pred, sample_weight=w[creator]) for w in weights])
+    """Average precision of the prediction as a breakout score: going down the list from the highest score,
+    the precision at each breakout, averaged over the breakouts. A constant score gets the base rate.
+
+    The same number as sklearn's `average_precision_score` with the same weights (tested).
+    """
+    order = np.argsort(-pred, kind="stable")  # highest prediction first
+    level = _tie_levels(-pred[order])
+    hit = (lift[order] >= LOG2).astype(float)
+    owner = creator[order]
+    out = np.empty(len(weights))
+    for r, w in enumerate(weights):
+        row_weight = w[owner]
+        breakouts = np.bincount(level, row_weight * hit)
+        flagged = np.cumsum(np.bincount(level, row_weight))  # everything scored at or above each level
+        caught = np.cumsum(breakouts)  # the breakouts among them
+        precision = np.divide(caught, flagged, out=np.zeros_like(caught), where=flagged > 0)
+        out[r] = (breakouts * precision).sum() / breakouts.sum()
+    return out
 
 
 def top_decile_share(lift, pred, creator, weights, min_videos=MIN_VIDEOS):
@@ -90,6 +118,11 @@ METRICS = {
 def eligible_creators(creator, min_videos=MIN_VIDEOS) -> int:
     """How many creators the within-creator metrics average over."""
     return int((np.bincount(creator) >= min_videos).sum())
+
+
+def _tie_levels(sorted_values):
+    """0, 0, 1, 2, 2, ...: the rank of each value among the distinct values, for values already sorted."""
+    return np.r_[0, np.cumsum(sorted_values[1:] != sorted_values[:-1])]
 
 
 def _spearman(lift, pred):
