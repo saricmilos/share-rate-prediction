@@ -3,3 +3,8 @@ numpy
 pandas
 matplotlib
 jupyterlab
+# Stage 2 (baselines): the statistics and models, the tests, and this repo's own package (src/sharerate).
+scipy
+scikit-learn
+pytest
+-e .

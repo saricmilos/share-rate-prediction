@@ -10,3 +10,7 @@ mlartifacts/
 .venv/
 __pycache__/
 .ipynb_checkpoints/
+
+# The editable install of src/sharerate
+*.egg-info/
+build/

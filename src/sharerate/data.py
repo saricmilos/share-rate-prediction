@@ -1,0 +1,167 @@
+"""The rows every model is fitted and scored on, with only the columns a model may see.
+
+`load_videos` returns one row per video in stage 1's `targets` table (`data/stage1.sqlite`), joined to the
+snapshot's `videos` table for the columns README rule 4 allows before a video is posted. Two kinds of column
+never come back:
+
+- **Anything measured after posting** (`FORBIDDEN_COLUMNS`): the counts, `snapshots`, `fetched_at`, `age_days`,
+  and every `files` column, because the platform keeps each channel's top clips by share rate (trap 3).
+- **Who or what the row is** (`IDENTIFYING_COLUMNS`): usernames and video ids stay inside this module, and
+  `creator` is an opaque number.
+
+The test split comes back only when it is asked for by name, so no notebook opens it by accident. Stage 5 opens
+it, once.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import sqlite3
+from contextlib import closing
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
+ROOT = Path(__file__).resolve().parents[2]
+STAGE1 = ROOT / "data" / "stage1.sqlite"
+SNAPSHOT = ROOT / "data" / "snapshot.sqlite"
+# The splits are frozen on this export (notebook 01, cell 30): a later one would bring counts they never saw.
+FROZEN_SNAPSHOT = "2026-10-14T09:56:20+00:00"
+
+SPLITS = ("train", "validation", "test")
+OPEN_SPLITS = ("train", "validation")  # the default: "test" has to be named
+LOG2 = float(np.log10(2))  # breakout = lift >= log10(2), at least twice the creator's recent median
+
+# From stage 1's targets table: the label, the baseline it is measured against, and the splits.
+TARGET_COLUMNS = ("published_at", "time_split", "creator_group", "creator_seen", "has_twin",
+                  "n_prior", "baseline", "lift", "breakout")
+# From the snapshot's videos table: what is known before posting (rule 4). Stage 3 adds the text fields here.
+SNAPSHOT_COLUMNS = ("duration_seconds", "is_wordless")
+COLUMNS = ("creator",) + TARGET_COLUMNS + SNAPSHOT_COLUMNS
+
+FORBIDDEN_COLUMNS = frozenset({
+    # Counts: outcomes of posting, read at the same moment as the shares (rule 4)
+    "views", "likes", "comments", "shares", "saves",
+    "view_count", "like_count", "comment_count", "share_count", "save_count",
+    # Computed from the counts, or saying when they were read and whether there were any
+    "share_rate", "log_sr", "fetched_at", "age_days", "has_stats",
+    # The snapshots table: the same counts, measured again later
+    "captured_at",
+    # The files table, and the videos table's file name: whether a clip was kept depends on its share rate
+    "file_name", "video_path", "has_video", "poster_path", "has_poster", "retired_at", "retire_reason",
+})
+IDENTIFYING_COLUMNS = frozenset({"username", "video_id"})
+
+
+def load_videos(splits=OPEN_SPLITS) -> pd.DataFrame:
+    """One row per target video in `splits`, with the columns in `COLUMNS` and nothing else.
+
+    Sorted by creator, then publish time (ties by video id, as stage 1 built the baseline), with a fresh index.
+    `lift` and `breakout` are the label. `baseline` is the median log share rate of the creator's last 30
+    videos posted at least 14 days earlier, and `n_prior` how many it is the median of (10 to 30).
+    """
+    frame = _read_targets(splits)
+    # breakout is lift >= log10(2) by definition (notebook 01, cell 27); the metrics rely on it.
+    if not (frame.breakout == (frame.lift >= LOG2)).all():
+        raise RuntimeError("breakout no longer equals lift >= log10(2) in data/stage1.sqlite")
+    videos = frame[list(COLUMNS)]
+    _refuse_forbidden(videos.columns)
+    return videos
+
+
+def load_leak_reference(splits=OPEN_SPLITS) -> pd.Series:
+    """`files.has_video` for the rows of `load_videos(splits)`, in the same order. **A leak, never a feature.**
+
+    The platform keeps each channel's top clips by share rate, so a clip that still has its file was a winner
+    (trap 3). Stage 2 shows it only as a labelled reference, to show what a leak looks like next to honest
+    baselines.
+    """
+    return _read_targets(splits, has_video=True).has_video.rename("has_video_LEAK")
+
+
+def load_posting_times() -> pd.DataFrame:
+    """When each target creator posted every TikTok video in the library, counted or not: `creator`, `posted_at`.
+
+    For timing features only (how often, and at what hour, a creator posts), never for rates. The time is
+    `published_at` where the counts fetch recorded it. Library videos without counts have none, so theirs
+    comes from the TikTok video id, whose top 32 bits are the upload's Unix time: on counted videos it sits a
+    median 10 s before `published_at`, and within a day for 99.6% of them.
+    """
+    with closing(_open_snapshot()) as con:
+        posts = pd.read_sql(
+            """SELECT username, video_id, published_at FROM videos
+               WHERE platform = 'tiktok' AND username IN (SELECT DISTINCT username FROM stage1.targets)""",
+            con,
+        )
+        codes = _creator_codes(con)
+    # Python ints, not floats: ids have 19 digits, more than a float holds exactly.
+    id_time = pd.to_datetime(posts.video_id.map(lambda video_id: int(video_id) >> 32), unit="s", utc=True)
+    posted_at = pd.to_datetime(posts.published_at, utc=True, format="ISO8601").fillna(id_time)
+    times = pd.DataFrame({"creator": posts.username.map(codes), "posted_at": posted_at})
+    return times.sort_values(["creator", "posted_at"], ignore_index=True)
+
+
+def _read_targets(splits, *, has_video: bool = False) -> pd.DataFrame:
+    """The targets rows in `splits` joined to the snapshot, still with their usernames and video ids."""
+    splits = tuple(splits)
+    if not splits or set(splits) - set(SPLITS):
+        raise ValueError(f"splits must be some of {SPLITS}, not {splits}")
+    columns = ", ".join([f"t.{c}" for c in TARGET_COLUMNS] + [f"v.{c}" for c in SNAPSHOT_COLUMNS])
+    leak_column, leak_join = "", ""
+    if has_video:
+        leak_column = ", f.has_video"
+        leak_join = ("JOIN files AS f "
+                     "ON f.platform = v.platform AND f.username = v.username AND f.video_id = v.video_id")
+    in_splits = ", ".join("?" * len(splits))
+    with closing(_open_snapshot()) as con:
+        frame = pd.read_sql(
+            f"""SELECT t.username, t.video_id, {columns}{leak_column}
+                FROM stage1.targets AS t
+                JOIN videos AS v ON v.platform = 'tiktok' AND v.username = t.username AND v.video_id = t.video_id
+                {leak_join}
+                WHERE t.time_split IN ({in_splits})""",
+            con,
+            params=splits,
+        )
+        expected = con.execute(
+            f"SELECT COUNT(*) FROM stage1.targets WHERE time_split IN ({in_splits})", splits).fetchone()[0]
+        codes = _creator_codes(con)
+    # An inner join drops a target whose video is missing from the snapshot; refuse rather than lose rows.
+    if len(frame) != expected:
+        raise RuntimeError(f"{expected - len(frame)} target rows have no row in the snapshot's videos table")
+    frame["published_at"] = pd.to_datetime(frame.published_at, utc=True, format="ISO8601")
+    frame["creator"] = frame.username.map(codes)
+    return frame.sort_values(["creator", "published_at", "video_id"], ignore_index=True)
+
+
+def _open_snapshot() -> sqlite3.Connection:
+    """The frozen snapshot, read-only, with stage 1's targets attached read-only as `stage1`."""
+    for path in (SNAPSHOT, STAGE1):
+        if not path.exists():
+            raise FileNotFoundError(
+                f"{path} is missing: run scripts/export_snapshot.py, then notebooks/01_eda_target.ipynb")
+    con = sqlite3.connect(f"file:{SNAPSHOT.as_posix()}?mode=ro", uri=True)
+    exported = con.execute("SELECT value FROM export_info WHERE key = 'exported_at'").fetchone()[0]
+    if exported != FROZEN_SNAPSHOT:
+        con.close()
+        raise RuntimeError(f"The splits are frozen on the {FROZEN_SNAPSHOT} export, not {exported}")
+    con.execute("ATTACH DATABASE ? AS stage1", (f"file:{STAGE1.as_posix()}?mode=ro",))
+    return con
+
+
+def _creator_codes(con: sqlite3.Connection) -> dict[str, int]:
+    """An opaque number per target creator: the rank of the md5 of the username among all 231.
+
+    The same in every call, whichever splits are loaded, and it says nothing about who the creator is.
+    """
+    names = [name for (name,) in con.execute("SELECT DISTINCT username FROM stage1.targets")]
+    ranked = sorted(names, key=lambda name: hashlib.md5(name.encode()).hexdigest())
+    return {name: code for code, name in enumerate(ranked)}
+
+
+def _refuse_forbidden(columns) -> None:
+    """Raise if a column a model must never see, or one that names a creator or a video, is about to leave."""
+    bad = sorted(set(columns) & (FORBIDDEN_COLUMNS | IDENTIFYING_COLUMNS))
+    if bad:
+        raise RuntimeError(f"The loader must never return {bad} (README rule 4, trap 3)")
