@@ -165,7 +165,8 @@ def _default_encoder(model_name):
     def encode(batch):
         # bge needs no instruction for the texts themselves (only for search queries). normalize: unit length,
         # so a dot product is the cosine similarity and every field's vector has the same scale. Small batches
-        # of texts sorted by length waste little on padding: about 70 texts a second on this laptop's CPU.
+        # of texts sorted by length waste little on padding: 44 texts a second on this laptop's CPU (stage 3's fill,
+        # 550,823 texts in 207 minutes).
         return model.encode(batch, batch_size=16, normalize_embeddings=True, show_progress_bar=False)
 
     return encode
