@@ -18,6 +18,7 @@ from __future__ import annotations
 import hashlib
 import os
 import re
+import uuid
 from pathlib import Path
 
 import numpy as np
@@ -101,8 +102,9 @@ def embed(texts, model_name=EMBEDDING_MODEL, *, encoder=None, cache_dir=EMBEDDIN
           progress=None) -> np.ndarray:
     """One unit-length sentence embedding per text, and a row of zeros for an empty text.
 
-    Each distinct text is embedded once and cached in `cache_dir/<model>/part-NNNNN.npz` (its md5 and its
-    vector), a chunk at a time, so a long run that stops keeps what it finished. `encoder(list_of_texts)` returns
+    Each distinct text is embedded once and cached in `cache_dir/<model>/part-<random id>.npz` (its md5 and its
+    vector), a chunk at a time, so a long run that stops keeps what it finished, and two runs at once never
+    overwrite each other's parts. `encoder(list_of_texts)` returns
     the vectors; by default it is the sentence-transformers model on the CPU, read from the local Hugging Face
     cache only. `progress(done, total)` is called after each chunk.
     """
@@ -118,16 +120,14 @@ def embed(texts, model_name=EMBEDDING_MODEL, *, encoder=None, cache_dir=EMBEDDIN
         encoder = encoder or _default_encoder(model_name)
         folder.mkdir(parents=True, exist_ok=True)
         todo = list(missing.items())
-        part = len(list(folder.glob("part-*.npz")))
         for start in range(0, len(todo), chunk):
             batch = todo[start:start + chunk]
             found = np.asarray(encoder([t for _, t in batch]), dtype=np.float32)
             batch_keys = np.array([k for k, _ in batch], dtype="S32")
             # Written to a temporary name, then renamed, so an interrupted write never leaves a broken part.
-            tmp = folder / f"part-{part:05d}.tmp.npz"
-            np.savez(tmp, keys=batch_keys, vectors=found)
-            os.replace(tmp, folder / f"part-{part:05d}.npz")
-            part += 1
+            name = f"part-{uuid.uuid4().hex}"
+            np.savez(folder / f"{name}.tmp.npz", keys=batch_keys, vectors=found)
+            os.replace(folder / f"{name}.tmp.npz", folder / f"{name}.npz")
             vectors.update(zip((k.decode() for k in batch_keys), found))
             if progress:
                 progress(min(start + chunk, len(todo)), len(todo))

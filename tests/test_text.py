@@ -66,7 +66,7 @@ def test_embed_caches_each_distinct_text_once(tmp_path):
 def test_an_interrupted_part_is_ignored(tmp_path):
     folder = tmp_path / "fake--model"
     folder.mkdir()
-    np.savez(folder / "part-00000.tmp.npz", keys=np.array([b"0" * 32]), vectors=np.ones((1, 3)))
+    np.savez(folder / "part-abc.tmp.npz", keys=np.array([b"0" * 32]), vectors=np.ones((1, 3)))
     calls = []
     text.embed(["abc"], "fake/model", encoder=fake_encoder(calls), cache_dir=tmp_path)
     assert calls == [["abc"]]
