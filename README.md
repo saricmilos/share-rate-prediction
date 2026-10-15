@@ -6,7 +6,7 @@ Can you tell from a short video alone, before it is posted, whether people will 
 
 About 247,000 TikTok videos from 320 creators, plus 26,000 YouTube videos from 43, collected for my own
 content platform. 156,000 of the TikTok videos have counts, fetched between July and October 2026; the other
-91,000 have everything else but no counts yet (trap 6). For each video:
+91,000 have everything else but no counts (trap 6). For each video:
 
 - **Counts:** views, likes, comments, shares and saves, measured on one or more dates. TikTok reports shares;
   YouTube's API returns none, so the share-rate work is TikTok only.
@@ -44,7 +44,7 @@ It reads the platform's databases read-only and writes `data/snapshot.sqlite` (a
 2. **Video age.** A clip fetched two days after posting hasn't finished collecting shares. `published_at` and
    `fetched_at` give its age; `snapshots` shows how much the counts still move.
 3. **Survivorship.** The platform retires old clips but keeps each channel's top clips by share rate, so whether
-   a file still exists depends on the target (stage 1 measured it: kept clips beat their creator's median 55% of
+   a file still exists depends on the target (stage 1 measured it: kept clips beat their creator's median 64% of
    the time, retired ones 43%). The `files` columns are for finding pixels, never features, and a model trained
    only on clips that still have their file learns from winners. Every image must also come out of one pipeline:
    retired clips have only a poster (taken about 1 s in, 480 px, JPEG quality 82), so kept clips' frames must be
@@ -55,8 +55,11 @@ It reads the platform's databases read-only and writes `data/snapshot.sqlite` (a
    people. They are features, not ground truth.
 6. **Missing counts.** 90,889 TikTok videos from 188 creators have no counts. Almost all of it is per creator,
    not per video: 33 creators were never fetched (27,373 videos), the last fetch for 107 returned nothing (47,420),
-   and for 48 it returned only part of the channel (16,096). Check whether those creators differ from the rest
-   before dropping them, and re-export after the counts are fetched again.
+   and for 48 it returned only part of the channel (16,096). The counts were fetched again for the 14 October
+   2026 export, and none of the missing ones came back.
+   - **The 140 creators without any counts stay out,** so every result holds for creators like the 231 that have
+     a target, not for the whole library.
+   - **The splits are final.** They are frozen on that snapshot, and counts that arrive later never enter them.
 
 [docs/why-the-rules.md](docs/why-the-rules.md) explains why each of these rules exists, with the splits'
 counts, and what would give a better result.
@@ -80,9 +83,13 @@ Every model has to beat the one above it, on the same split.
 - **The creator matters more than the video.** The creator alone explains 38% of the variance in log share
   rate, so every video is compared with its own creator.
 - **Share rate drifted.** The same creators' median share rate rose about 4.7× between their 2022 and 2026
-  videos. The baseline is therefore the median of the creator's previous 30 videos, not their lifetime.
-- **The rate settles fast.** Young videos keep gaining views, but their share rate barely moves after the first
-  two weeks.
-- **The target:** `lift` = log share rate minus that baseline, for 146,431 videos from 234 creators. The baseline
-  alone explains 52% of the variance; that is the bar. `breakout` (at least twice the baseline) is true for 24%.
-  The target's distribution is the same in train, validation and test.
+  videos. The baseline is therefore the median of the creator's last 30 videos, not their lifetime.
+- **The rate settles fast.** Young videos keep gaining views, but their share rate barely moves: a video first read
+  at 15 to 30 days old moved a median 1.6% afterwards (932 videos from 64 creators). So the baseline uses only
+  videos posted at least 14 days earlier, whose rate had settled when the video went up.
+- **The target:** `lift` = log share rate minus that baseline, for 143,489 videos from 231 creators. `breakout`
+  (at least twice the baseline) is true for 24%. The target's distribution is the same in train, validation and
+  test.
+- **The bar.** Predicting zero lift ("every video does as well as its creator's recent median") misses by 0.371
+  log10 on validation, a factor of 2.35 either way. Every model has to shrink that error, and is reported for
+  creators it trained on, creators who started later, and creators it never saw.
