@@ -9,6 +9,11 @@ never come back:
 - **Who or what the row is** (`IDENTIFYING_COLUMNS`): usernames and video ids stay inside this module, and
   `creator` is an opaque number.
 
+With `text=True` it also returns what the video says and shows in writing (`TEXT_COLUMNS`, stage 3). Two text
+columns of the snapshot stay out: the original-language `transcript` (stored for 11% of the target videos; the
+English one is there for 80%) and `description`, a language model's "why it works" note written from the other text
+fields, which adds that model's opinion and nothing the fields don't hold.
+
 The test split comes back only when it is asked for by name, so no notebook opens it by accident. Stage 5 opens
 it, once.
 """
@@ -36,9 +41,22 @@ LOG2 = float(np.log10(2))  # breakout = lift >= log10(2), at least twice the cre
 # From stage 1's targets table: the label, the baseline it is measured against, and the splits.
 TARGET_COLUMNS = ("published_at", "time_split", "creator_group", "creator_seen", "has_twin",
                   "n_prior", "baseline", "lift", "breakout")
-# From the snapshot's videos table: what is known before posting (rule 4). Stage 3 adds the text fields here.
+# From the snapshot's videos table: what is known before posting (rule 4).
 SNAPSHOT_COLUMNS = ("duration_seconds", "is_wordless")
 COLUMNS = ("creator",) + TARGET_COLUMNS + SNAPSHOT_COLUMNS
+# Also from the videos table, with `text=True`: what the video says and shows in writing, all fixed when it is
+# posted (rule 4). {name in the frame: column in the snapshot}. An empty field comes back as "".
+TEXT_COLUMNS = {
+    "caption": "title",  # the creator's caption, as the platform returned it, hashtags included
+    "transcript_en": "transcript_en",  # the spoken words in English (Whisper, translated where the video isn't)
+    # The script split into hook, body and payoff by a language model, from the transcript, or from the on-screen
+    # text and scene description when nobody speaks
+    "hook_en": "hook_en",
+    "body_en": "body_en",
+    "payoff_en": "payoff_en",
+    "onscreen_text_en": "onscreen_text_en",  # read off sampled frames by a vision-language model (trap 5)
+    "scene_description_en": "scene_description_en",  # written by the same vision-language model (trap 5)
+}
 
 FORBIDDEN_COLUMNS = frozenset({
     # Counts: outcomes of posting, read at the same moment as the shares (rule 4)
@@ -54,18 +72,21 @@ FORBIDDEN_COLUMNS = frozenset({
 IDENTIFYING_COLUMNS = frozenset({"username", "video_id"})
 
 
-def load_videos(splits=OPEN_SPLITS) -> pd.DataFrame:
+def load_videos(splits=OPEN_SPLITS, *, text: bool = False) -> pd.DataFrame:
     """One row per target video in `splits`, with the columns in `COLUMNS` and nothing else.
 
     Sorted by creator, then publish time (ties by video id, as stage 1 built the baseline), with a fresh index.
     `lift` and `breakout` are the label. `baseline` is the median log share rate of the creator's last 30
     videos posted at least 14 days earlier, and `n_prior` how many it is the median of (10 to 30).
+
+    `text=True` adds the `TEXT_COLUMNS` after them, the same rows in the same order. They hold captions and
+    transcripts, other creators' words: they are for fitting models and never for printing.
     """
-    frame = _read_targets(splits)
+    frame = _read_targets(splits, text=text)
     # breakout is lift >= log10(2) by definition (notebook 01, cell 27); the metrics rely on it.
     if not (frame.breakout == (frame.lift >= LOG2)).all():
         raise RuntimeError("breakout no longer equals lift >= log10(2) in data/stage1.sqlite")
-    videos = frame[list(COLUMNS)]
+    videos = frame[list(COLUMNS) + (list(TEXT_COLUMNS) if text else [])]
     _refuse_forbidden(videos.columns)
     return videos
 
@@ -102,12 +123,15 @@ def load_posting_times() -> pd.DataFrame:
     return times.sort_values(["creator", "posted_at"], ignore_index=True)
 
 
-def _read_targets(splits, *, has_video: bool = False) -> pd.DataFrame:
+def _read_targets(splits, *, has_video: bool = False, text: bool = False) -> pd.DataFrame:
     """The targets rows in `splits` joined to the snapshot, still with their usernames and video ids."""
     splits = tuple(splits)
     if not splits or set(splits) - set(SPLITS):
         raise ValueError(f"splits must be some of {SPLITS}, not {splits}")
-    columns = ", ".join([f"t.{c}" for c in TARGET_COLUMNS] + [f"v.{c}" for c in SNAPSHOT_COLUMNS])
+    selected = [f"t.{c}" for c in TARGET_COLUMNS] + [f"v.{c}" for c in SNAPSHOT_COLUMNS]
+    if text:
+        selected += [f"v.{source} AS {name}" for name, source in TEXT_COLUMNS.items()]
+    columns = ", ".join(selected)
     leak_column, leak_join = "", ""
     if has_video:
         leak_column = ", f.has_video"
@@ -132,6 +156,9 @@ def _read_targets(splits, *, has_video: bool = False) -> pd.DataFrame:
         raise RuntimeError(f"{expected - len(frame)} target rows have no row in the snapshot's videos table")
     frame["published_at"] = pd.to_datetime(frame.published_at, utc=True, format="ISO8601")
     frame["creator"] = frame.username.map(codes)
+    for name in TEXT_COLUMNS if text else ():
+        # 210 target videos have no notes row at all (NULL), and some fields are blank or whitespace: all become "".
+        frame[name] = frame[name].fillna("").astype(str).str.strip()
     return frame.sort_values(["creator", "published_at", "video_id"], ignore_index=True)
 
 

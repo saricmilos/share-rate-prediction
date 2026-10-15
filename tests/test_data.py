@@ -101,3 +101,34 @@ def test_posting_times_hold_every_target_video(every_split):
     found = every_split.merge(posts, left_on=["creator", "published_at"], right_on=["creator", "posted_at"],
                               how="left", indicator=True)
     assert (found._merge == "both").all()
+
+
+@pytest.fixture(scope="module")
+def with_text():
+    return data.load_videos(data.SPLITS, text=True)
+
+
+def test_text_comes_back_only_when_asked(videos, every_split, with_text):
+    assert not set(videos.columns) & set(data.TEXT_COLUMNS)
+    assert tuple(with_text.columns) == data.COLUMNS + tuple(data.TEXT_COLUMNS)
+    # The same rows in the same order, so a text feature lines up with every stage 2 feature.
+    assert with_text[list(data.COLUMNS)].equals(every_split)
+
+
+def test_text_is_never_missing_only_empty(with_text):
+    text = with_text[list(data.TEXT_COLUMNS)]
+    assert text.notna().all().all()
+    assert (text.map(lambda value: value == value.strip())).all().all()
+
+
+def test_text_coverage_matches_the_brief(with_text):
+    # Notebook 01, cell 27: of the 143,489 target videos, how many have each field.
+    has = (with_text[list(data.TEXT_COLUMNS)] != "").sum()
+    assert has[["transcript_en", "onscreen_text_en", "scene_description_en", "hook_en"]].to_dict() == {
+        "transcript_en": 115_440, "onscreen_text_en": 85_261, "scene_description_en": 142_793, "hook_en": 105_086}
+
+
+def test_the_left_out_text_columns_never_come_back(with_text):
+    # The original-language transcript and the language model's "why it works" note stay in the snapshot.
+    assert {"transcript", "description", "title"}.isdisjoint(with_text.columns)
+    assert set(data.TEXT_COLUMNS.values()) <= snapshot_columns("videos")
