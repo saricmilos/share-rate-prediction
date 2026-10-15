@@ -72,7 +72,7 @@ Every model has to beat the one above it, on the same split.
 |---|---|---|
 | 0. Data | Read-only snapshot out of the platform | Done |
 | 1. EDA and target | Share-rate distribution, per-creator normalisation, the age effect, the survivorship check | Done: [notebook](notebooks/01_eda_target.ipynb) |
-| 2. Baselines | The creator's own history; length and posting hour | |
+| 2. Baselines | The creator's own history; length and posting hour | Done: [notebook](notebooks/02_baselines.ipynb). Only metadata (in effect, length) beats zero lift, by 0.2% |
 | 3. Text | Transcript and on-screen text | |
 | 4. Image | The poster frame through a pretrained image model, then fine-tuned on a rented GPU | |
 | 5. Combined | Frames and text together, every run logged in MLflow | |
@@ -93,3 +93,24 @@ Every model has to beat the one above it, on the same split.
 - **The bar.** Predicting zero lift ("every video does as well as its creator's recent median") misses by 0.371
   log10 on validation, a factor of 2.35 either way. Every model has to shrink that error, and is reported for
   creators it trained on, creators who started later, and creators it never saw.
+
+## What stage 2 found
+
+All on validation, each gain with a 95% interval from 2,000 resamples of creators. The test stays closed until
+stage 5.
+
+- **Only one baseline beats the bar, barely.** Zero lift misses by 0.369 log10 for creators the model trained on.
+  Ridge regression on metadata cuts that by 0.0007 [0.0002, 0.0011], an error 0.2% smaller: real, and too small to
+  help anyone choose what to post.
+- **That gain is the video's length.** Leave duration out and it's gone. Shorter videos do slightly better against
+  their creator's median: a video twice as long does 3.6% worse. The posting hour adds nothing, in UTC or measured
+  from the creator's usual hour, and neither do the weekday or the gap since the previous video.
+- **Recent form ranks breakouts but misses the bar.** A weighted mean of the creator's recent settled videos doesn't
+  shrink the typical error, but of each creator's top tenth by it, 32% broke out, against 25%. The medians of the
+  last 5 and 10 videos do worse than zero lift.
+- **A creator's past lift doesn't carry over.** Any trust in a creator's average lift made the next prediction
+  worse.
+- **For creators it never saw,** nothing passes in both unseen groups: the gains are under 0.002 and depend on the
+  model.
+- **What a leak looks like:** whether a clip's file still exists cuts the error by 0.019, against 0.0007 for the
+  honest winner, because the platform keeps each channel's top clips.
