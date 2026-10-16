@@ -28,6 +28,10 @@ The texts themselves have to go up to be embedded, and they are other creators' 
 and captions, and 20,039 of them (3.1%) hold an @mention of an account. They go up unlinked to any video or creator,
 and that is why the last step destroys the box (section 5, step 7).
 
+The captions go up as they are, @mentions included (decided 2026-10-16). The 4B must embed exactly the texts bge-small
+embedded in stage 3, under the same md5 keys, or its bar would compare two encoders on different inputs; stripping
+the mentions would change 20,039 texts and their keys.
+
 ## 2. The card, the disk and the template
 
 From the flywheel's runbooks (`Backend/scripts/remote_gpu/README.md` and `EMBEDDING_README.md`, read-only):
