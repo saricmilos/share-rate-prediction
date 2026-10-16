@@ -23,7 +23,9 @@ plots only.
 python scripts/export_snapshot.py               # standard library only
 py -3.11 -m venv .venv                          # then, for the analysis:
 .venv/Scripts/activate                          # Windows; on macOS or Linux: source .venv/bin/activate
+pip install torch --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt
+python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('BAAI/bge-small-en-v1.5')"
 jupyter lab
 ```
 
@@ -36,6 +38,13 @@ It reads the platform's databases read-only and writes `data/snapshot.sqlite` (a
 | `files` | video | where the clip and its poster frame are, and whether they still exist |
 | `stat_runs` | creator | the last counts fetch: when, how many videos it saw and how many it matched |
 | `export_info` | key | when and from where the snapshot was made |
+
+Notebook 03 needs two things the others don't. The CPU build of torch goes in before the requirements, so pip doesn't
+fetch the much larger CUDA build. bge-small, the sentence encoder, is downloaded once by the `python -c` line (about
+130 MB), because the notebook only ever reads it from disk. The notebook's first run then embeds every distinct text of
+the training and validation videos once, 550,823 of them, which takes about 3.5 hours on a laptop CPU. The vectors go
+into `data/embeddings/` (about 820 MB, not in git). A run that stops keeps what it finished, and later runs only read
+the cache.
 
 ## Traps to handle before any model
 
@@ -73,7 +82,7 @@ Every model has to beat the one above it, on the same split.
 | 0. Data | Read-only snapshot out of the platform | Done |
 | 1. EDA and target | Share-rate distribution, per-creator normalisation, the age effect, the survivorship check | Done: [notebook](notebooks/01_eda_target.ipynb) |
 | 2. Baselines | The creator's own history; length and posting hour | Done: [notebook](notebooks/02_baselines.ipynb). Only metadata (in effect, length) beats zero lift, by 0.2% |
-| 3. Text | Transcript and on-screen text | |
+| 3. Text | The caption, transcript, on-screen text and scene description, as counted words and as sentence embeddings | Done: [notebook](notebooks/03_text.ipynb). The words add to the baseline: sentence embeddings cut its error by 2.2% |
 | 4. Image | The poster frame through a pretrained image model, then fine-tuned on a rented GPU | |
 | 5. Combined | Frames and text together, every run logged in MLflow | |
 | 6. Demo | A FastAPI `/predict` endpoint in Docker | |
@@ -114,3 +123,33 @@ stage 5.
   model.
 - **What a leak looks like:** whether a clip's file still exists cuts the error by 0.019, against 0.0007 for the
   honest winner, because the platform keeps each channel's top clips.
+
+## What stage 3 found
+
+All on validation, against stage 2's ridge on metadata, each gain with a 95% interval from 2,000 resamples of
+creators. The test stays closed until stage 5.
+
+- **The words add to the baseline, and the gain holds.** For creators the model trained on, the metadata ridge misses
+  by 0.3681 log10. Sentence embeddings (bge-small) of seven text fields (the caption, the transcript and its hook,
+  body and payoff, on-screen text, the scene description), on top of it, cut that by 0.0082 [0.0051, 0.0117]: an
+  error 2.2% smaller. TF-IDF of the words at least 20 creators use cuts it by 0.0060 [0.0033, 0.0085]. Both hold
+  without the 73 reposts, and both clear 0 for new and for held-out creators too, which nothing in stage 2 did.
+  Small, and about twelve times what metadata added over zero lift.
+- **Meaning beats counted words, by a little.** The embeddings beat TF-IDF by 0.0023 [0.0004, 0.0043] in the error,
+  and in every field alone, but not at ranking breakouts (ROC-AUC). Under the bar written before the run, that earns
+  a larger encoder a run on stage 4's rented GPU.
+- **The words rank videos too.** Inside a creator, the Spearman correlation rises from the baseline's 0.071 to 0.218
+  with the embeddings, above recent form's 0.146. Of each creator's top tenth by the TF-IDF model, 36.8% broke out,
+  against 29.0% for the baseline and 24.7% for zero lift. Recent form still ranks breakouts best (ROC-AUC 0.588), so
+  the two signals differ.
+- **Where the signal is.** Alone, on-screen text (+0.0051) and the scene description (+0.0049) are the strongest
+  fields, and a vision-language model wrote both (trap 5): the creator's words read off the frames, and the model's
+  reading of the picture. The six word fields without the scene description get most of the gain (+0.0071 of
+  +0.0082), and the scene description adds about 0.001 on top. Inside a creator, a video with text on screen beats
+  one without by 15%.
+- **What the words say.** Share prompts and friendship push the prediction up ("send", "this to", "bestie",
+  "friend"). Ads push it down most ("ad", −27%; "code"), and so do borrowed formats: duets, challenges, trends,
+  filters. Two strong terms mark a language (Serbian), not a subject.
+- **Not a leak.** Given a clip's lift, neither model's correction knows whether the platform kept the clip (TF-IDF
+  −0.0025 [−0.0097, +0.0047]; the embeddings slightly below 0, the opposite of a detector). Both also rank videos
+  among kept clips alone and among retired clips alone.
