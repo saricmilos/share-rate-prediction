@@ -12,3 +12,7 @@ pytest
 #   pip install torch --index-url https://download.pytorch.org/whl/cpu
 torch
 sentence-transformers
+# Stage 4 (frames): the decoder and image library the platform's posters were made with, at the same versions, so
+# kept clips' frames come out byte for byte like retired clips' posters (trap 3; sharerate.frames checks them).
+av==17.0.1
+pillow==12.1.1
