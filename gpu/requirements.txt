@@ -1,0 +1,8 @@
+# What embed_job.py needs on the rented box, on top of the vast.ai PyTorch template's own CUDA build of torch.
+# Pinned to the laptop's versions, where the kit was tested, so the box runs the code the test ran.
+# torch is not listed: pip would replace the template's CUDA build. It must be 2.5 or newer (transformers 5 needs it);
+# docs/gpu.md, step 3, checks it.
+numpy
+pillow==12.1.1
+transformers==5.19.0
+sentence-transformers==6.1.0
