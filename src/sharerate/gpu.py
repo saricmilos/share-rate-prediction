@@ -198,9 +198,11 @@ class Remote:
                          "pgrep -af '[e]mbed_job.py' || echo 'no job running'", capture=True))
 
     def wipe(self) -> None:
-        # Everything uploaded and downloaded: the job folder (texts, frames, vectors) and the model cache
+        # Everything uploaded and downloaded: the job folder (texts, frames, vectors) and the model cache, which is
+        # $HF_HOME where the template sets it (vast.ai's Ollama template: /workspace/.hf_home), else the default
         subprocess.run(["ssh", "-p", str(self.port), *self.options, f"{self.user}@{self.host}",
-                        f"rm -rf {self.folder} /root/.cache/huggingface && echo wiped"], check=True)
+                        f'rm -rf {self.folder} "${{HF_HOME:-/root/.cache/huggingface}}" /root/.cache/huggingface '
+                        f"&& echo wiped"], check=True)
 
 
 class LocalBox(Remote):

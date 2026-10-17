@@ -38,10 +38,21 @@ From the flywheel's runbooks (`Backend/scripts/remote_gpu/README.md` and `EMBEDD
 
 - **GPU: 2× RTX 3090, 24 GB each** (about $0.13 an hour a card in July 2026). The 4B needs 24 GB or more (notebook
   03): its weights take about 16 GB in float32, and the flywheel ran it at batch 64 on this pair, 22 to 24 GB a card
-  with texts up to 1,024 tokens. Ours stop at 256 tokens, so they fit with room. One card works too, at twice the time.
-- **Template:** the vast.ai PyTorch template (CUDA build of torch already in `/venv/main`).
+  with texts up to 1,024 tokens. Ours stop at 256 tokens, and still batch 64 ran out of memory in float32: in the
+  stage 4 rental both cards crashed at about 290,000 of their 322,000 texts, where the texts (embedded shortest first)
+  reach the cut. So the text job runs at `--batch 32`; resumed at 32, both halves finished. One card works too, at twice
+  the time.
+- **Template:** the vast.ai PyTorch template (CUDA build of torch already in `/venv/main`). Check it on the instance
+  card before anything else. The stage 4 rental (2026-10-17) came up with vast.ai's Ollama template instead: no torch,
+  and on boot it started downloading a 35-billion-parameter model into `/workspace` at about 100 MB a second, which
+  would have filled the disk in minutes. On such a box, first `ssh -p PORT root@HOST "supervisorctl stop ollama; rm -rf
+  /workspace/ollama/models"`, then install torch (step 2's second command, with `--no-cache-dir`).
 - **Disk: 60 GB**, set before renting, because it can't grow later: the 4B's weights (8 GB), the image encoder (up to
-  4 GB), the frames twice (packed and unpacked, 3.3 GB each), the vectors (3 GB), pip's packages.
+  4.5 GB), the frames twice (packed and unpacked, 3.3 GB each), the vectors (3 GB), pip's packages (torch alone is
+  about 5 GB when the template lacks it). The stage 4 rental had 32 GB and fit, with the 4B's weights deleted once
+  its job was done. That template keeps the model cache in `$HF_HOME` (`/workspace/.hf_home`), with every model's
+  weights in one shared `hub/blobs` folder: deleting a model's own folder there frees only its links, and its blobs (the
+  ones no remaining model links to) have to go too. `gpu wipe` deletes `$HF_HOME` whole.
 - **Offer:** on demand, internet at least 500 Mbps down, reliability at least 99%.
 - **SSH:** your public key in vast.ai → Account → SSH Keys. The instance card shows `ssh -p PORT root@HOST`.
 
@@ -58,17 +69,18 @@ python -m sharerate.gpu pack          # data/gpu/outbox/: texts.jsonl.gz, frames
 
 ## 4. The time and the cost
 
-Measured where it says so; the rest is estimated from a measurement named beside it.
+Estimated before stage 4's rental, each from a measurement named beside it, then measured in it (2026-10-17, 2× RTX
+3090, float32; notebook 04_image, cell 3, reads the job's own log).
 
-| Step | Time | How it was worked out |
-|---|---|---|
-| Upload the texts | under a minute | 51 MB |
-| Upload the frames | about 45 minutes at 10 Mbit/s up, 22 at 20 (not measured) | 3.3 GB, during the text job, so it adds no box time |
-| **Text job**, Qwen3-Embedding-4B, float32, both cards | **about 2 hours, at most 5** | The flywheel measured this model on 2× RTX 3090: 126,952 TikTok transcripts in about 58 minutes, 36 texts a second (its server sets no precision, so it ran at the library's default; if that was bfloat16, float32 here is slower, and the upper bound allows for it). Transcripts of that kind average 78 tokens (the snapshot's 169,218 distinct TikTok transcripts, counted with Qwen3's tokenizer); our 644,955 texts average 32 tokens after the cut at 256, 20.8 million in all. At the flywheel's rate in tokens (about 2,800 a second) that is 2.0 hours; at its rate in texts, 4.9 hours, an upper bound since short texts cost less. One card: twice as long. |
-| **Frame job**, a base-size encoder (CLIP, SigLIP 2 base) | minutes (not measured on a GPU) | On this laptop's CPU, CLIP ViT-B/32 embedded 1,000 frames in 131 s, 7.6 a second with the model's loading; a GPU runs such an encoder at hundreds of frames a second. A large encoder (SigLIP so400m at 384 px) might take half an hour (a guess). |
-| Fetch the vectors | about 5 minutes at 100 Mbit/s down | 2.6 GB of text vectors (644,955 × 1,024 × 4 bytes) and 0.3 to 0.6 GB of frame vectors |
-| **The whole rental** | **about 3 to 6 hours** | setup, the text job, the frame job after it, the fetch |
-| **Cost** | **about $1 to $2** | 2× RTX 3090 at about $0.13 a card an hour (the flywheel's price sheet, July 2026), plus a few cents of disk and egress (about $1.33 a TB) |
+| Step | Estimated | How it was estimated | Measured |
+|---|---|---|---|
+| Upload the texts | under a minute | 51 MB | 54 s |
+| Upload the frames | about 45 minutes at 10 Mbit/s up, 22 at 20 | 3.3 GB, during the text job, so it adds no box time | 8 minutes (3.37 GB), during the torch install |
+| **Text job**, Qwen3-Embedding-4B, both cards | **about 2 hours, at most 5** | The flywheel measured this model on 2× RTX 3090: 126,952 TikTok transcripts in about 58 minutes, 36 texts a second (its server sets no precision, so it ran at the library's default; if that was bfloat16, float32 here is slower, and the upper bound allows for it). Transcripts of that kind average 78 tokens (the snapshot's 169,218 distinct TikTok transcripts, counted with Qwen3's tokenizer); our 644,955 texts average 32 tokens after the cut at 256, 20.8 million in all. At the flywheel's rate in tokens (about 2,800 a second) that is 2.0 hours; at its rate in texts, 4.9 hours, an upper bound since short texts cost less. One card: twice as long. | **2.1 hours** (10:00 to 12:06 UTC), two out-of-memory crashes at batch 64 and their resumes at batch 32 included |
+| **Frame job** | minutes for a base-size encoder; half an hour for SigLIP so400m at 384 px (a guess) | On this laptop's CPU, CLIP ViT-B/32 embedded 1,000 frames in 131 s, 7.6 a second with the model's loading | **1.0 hour** for SigLIP 2 so400m/14 at 384 px on both cards, 22.6 and 23.1 frames a second a card (1.74 card-hours) |
+| Fetch the vectors | about 5 minutes at 100 Mbit/s down | 2.6 GB of text vectors (644,955 × 1,024 × 4 bytes) and 0.3 to 0.6 GB of frame vectors | 5 minutes for the text vectors, then the frames in two short fetches |
+| **The whole rental** | **about 3 to 6 hours** | setup, the text job, the frame job after it, the fetch | **about 3.2 hours**, from the box's start to its destruction |
+| **Cost** | **about $1 to $2** | 2× RTX 3090 at about $0.13 a card an hour (the flywheel's price sheet, July 2026), plus a few cents of disk and egress (about $1.33 a TB) | not read from the bill: **about $0.85 to $1.30** at $0.13 to $0.20 a card-hour |
 
 Two things this table says plainly:
 
@@ -102,11 +114,11 @@ If it is older, install the build the flywheel validated on 2026-10-03:
 `ssh -p PORT root@HOST "source /venv/main/bin/activate; pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cu130"`.
 
 **Step 3. Start the text job, one half on each card.** `run` installs `gpu/requirements.txt`, then starts the job
-detached (`setsid nohup`), so a dropped SSH link doesn't stop it:
+detached (`setsid nohup`), so a dropped SSH link doesn't stop it, and returns at once:
 
 ```bash
-python -m sharerate.gpu run --host HOST --port PORT text --model Qwen/Qwen3-Embedding-4B --dims 1024 --device cuda:0 --shard 0/2
-python -m sharerate.gpu run --host HOST --port PORT text --model Qwen/Qwen3-Embedding-4B --dims 1024 --device cuda:1 --shard 1/2
+python -m sharerate.gpu run --host HOST --port PORT text --model Qwen/Qwen3-Embedding-4B --dims 1024 --device cuda:0 --shard 0/2 --batch 32
+python -m sharerate.gpu run --host HOST --port PORT text --model Qwen/Qwen3-Embedding-4B --dims 1024 --device cuda:1 --shard 1/2 --batch 32
 ```
 
 On one card: a single `run` with `--device cuda` and no `--shard`. Each text goes to the half its md5 picks, so the
@@ -122,12 +134,19 @@ python -m sharerate.gpu status --host HOST --port PORT      # the jobs' last lin
 
 An upload that drops is run again: files already there whole are skipped.
 
-**Step 5. The frame job, on the first card that is free** (when its text half is done; `status` shows which).
-`ENCODER` is the model stage 4 names, and `cuda:0` becomes `cuda:1` if that card finished first:
+**Step 5. The frame job, one half on each card, as each card's text half finishes** (`status` shows which).
+Stage 4 named SigLIP 2 so400m/14 at 384 px (notebook 04_image, cell 0); `--batch 64` keeps its 729 patches a frame
+well inside 24 GB in float32:
 
 ```bash
-python -m sharerate.gpu run --host HOST --port PORT frames --model ENCODER --device cuda:0
+python -m sharerate.gpu run --host HOST --port PORT frames --model google/siglip2-so400m-patch14-384 --device cuda:0 --shard 0/2 --batch 64
+python -m sharerate.gpu run --host HOST --port PORT frames --model google/siglip2-so400m-patch14-384 --device cuda:1 --shard 1/2 --batch 64
 ```
+
+Start the second only once the first's log says how many frames it has to embed: the first run unpacks the tars
+into `frames/`, and a second run unpacking them at the same moment would rewrite files the first is already reading.
+Once the first has unpacked, the second finds the tars marked as unpacked and skips straight to its half. If the
+first card to finish is `cuda:1`, swap the devices.
 
 **Step 6. The vectors come back:**
 
@@ -193,7 +212,9 @@ deleted: nothing else reads it.
   files are skipped.
 - **A job died** (`status` shows no job running and its log ends in an error): fix the cause and `run` the same
   command again. It skips every id already in a part, and loses at most the part it was writing (10,000 rows).
-- **CUDA out of memory** on the text job: add `--batch 32` (the default on a GPU is 64).
+- **CUDA out of memory** on the text job: `run` the same command with a smaller `--batch` (16 after 32). It resumes
+  from its parts. A `memory allocation failed with OOM` line marked `[W` in the log is only a warning: the allocator
+  freed its cache and retried, and the job goes on.
 - **`holds 384-number vectors, not 1024`**: a folder holds one model at one width; a run with other `--dims` needs
   another `--root`.
 - **`fetch` shows `missing` above 0 after every job finished**: a part was being written when the job stopped. Run
