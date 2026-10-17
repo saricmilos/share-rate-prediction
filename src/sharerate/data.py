@@ -101,6 +101,24 @@ def load_leak_reference(splits=OPEN_SPLITS) -> pd.Series:
     return _read_targets(splits, has_video=True).has_video.rename("has_video_LEAK")
 
 
+def load_creator_views(splits=OPEN_SPLITS) -> pd.Series:
+    """Each creator's median view count over their target videos in `splits`: a channel's size, for cutting results
+    into groups of creators. **Never a feature.**
+
+    Views are counted after posting, so no model sees them (rule 4). Over the training and validation periods this is
+    one number per creator, known before any test video went up, so it can only sort creators by size; it says nothing
+    about any one video. Indexed by the opaque `creator` code, like every other frame here.
+    """
+    splits = tuple(splits)
+    if not splits or set(splits) - set(SPLITS):
+        raise ValueError(f"splits must be some of {SPLITS}, not {splits}")
+    with closing(_open_snapshot()) as con:
+        views = pd.read_sql(f"SELECT username, views FROM stage1.targets WHERE time_split IN ({', '.join('?' * len(splits))})",
+                            con, params=splits)
+        codes = _creator_codes(con)
+    return views.groupby(views.username.map(codes)).views.median().rename("median_views").rename_axis("creator")
+
+
 def load_posting_times() -> pd.DataFrame:
     """When each target creator posted every TikTok video in the library, counted or not: `creator`, `posted_at`.
 

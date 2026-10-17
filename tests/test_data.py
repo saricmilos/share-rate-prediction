@@ -132,3 +132,11 @@ def test_the_left_out_text_columns_never_come_back(with_text):
     # The original-language transcript and the language model's "why it works" note stay in the snapshot.
     assert {"transcript", "description", "title"}.isdisjoint(with_text.columns)
     assert set(data.TEXT_COLUMNS.values()) <= snapshot_columns("videos")
+
+
+def test_creator_views_are_one_number_per_creator(videos):
+    # A channel's size for cutting results, never a feature: one median per creator, none per video.
+    views = data.load_creator_views()
+    assert views.index.is_unique and set(views.index) == set(videos.creator)
+    assert views.name == "median_views" and (views >= 1_000).all()  # stage 1 kept videos with at least 1,000 views
+    assert len(views) < len(videos) / 100
