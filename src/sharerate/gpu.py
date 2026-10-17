@@ -183,9 +183,11 @@ class Remote:
                         f"{self.user}@{self.host}:{self.folder}/{name}", str(local)], check=True)
 
     def start(self, job_args: list[str], log: str) -> None:
-        # setsid nohup: the job keeps running when the ssh link drops (the flywheel runbook's lesson)
+        # setsid nohup: the job keeps running when the ssh link drops (the flywheel runbook's lesson). The job's own
+        # ( ... &) matters: a bare `a && b && job &` sends the whole chain to the background, and that background
+        # shell holds the ssh link open until the job ends, so `run` would wait hours instead of returning.
         command = (f"mkdir -p logs && python -m pip install -q -r requirements.txt && "
-                   f"setsid nohup python embed_job.py {shlex.join(job_args)} > logs/{log} 2>&1 < /dev/null &")
+                   f"(setsid nohup python embed_job.py {shlex.join(job_args)} > logs/{log} 2>&1 < /dev/null &)")
         self.shell(command)
         print(f"Started on {self.host}: python embed_job.py {shlex.join(job_args)}  (log: {self.folder}/logs/{log})")
 
