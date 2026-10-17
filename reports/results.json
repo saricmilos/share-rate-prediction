@@ -1,0 +1,3655 @@
+{
+ "about": {
+  "notebook": "notebooks/05_results.ipynb",
+  "snapshot": "2026-10-14T09:56:20+00:00",
+  "draws": 2000,
+  "seed": 2026,
+  "min_creators": 5,
+  "interval": "95%, from draws of creators, paired for gains"
+ },
+ "data": {
+  "videos": 143489,
+  "creators": 231,
+  "breakout_rate": 0.244953,
+  "test_period": "posted 1 April 2026 to 18 September 2026",
+  "splits": {
+   "train": {
+    "seen": {
+     "videos": 74552,
+     "creators": 148
+    },
+    "new": {
+     "videos": 0,
+     "creators": 0
+    },
+    "holdout": {
+     "videos": 25865,
+     "creators": 35
+    }
+   },
+   "validation": {
+    "seen": {
+     "videos": 13646,
+     "creators": 138
+    },
+    "new": {
+     "videos": 2275,
+     "creators": 27
+    },
+    "holdout": {
+     "videos": 5411,
+     "creators": 38
+    }
+   },
+   "test": {
+    "seen": {
+     "videos": 12455,
+     "creators": 138
+    },
+    "new": {
+     "videos": 4901,
+     "creators": 39
+    },
+    "holdout": {
+     "videos": 4384,
+     "creators": 42
+    }
+   }
+  }
+ },
+ "final_model": "combined",
+ "models": {
+  "B0 zero lift": "zero lift (the creator's recent median)",
+  "B3 ridge": "metadata (B3 ridge)",
+  "B1 recent form": "recent form (B1)",
+  "4B ridge": "metadata and the words (4B ridge)",
+  "image ridge": "metadata, the words and the first frame (image ridge)",
+  "combined": "metadata, the words and recent form (the combined model)",
+  "4B logistic": "the words' breakout head (4B logistic, ranking only)",
+  "has_video (a LEAK, not a model)": "whether the platform kept the clip (a leak, never a model)"
+ },
+ "metrics": [
+  "MAE",
+  "skill",
+  "spearman_within",
+  "roc_auc",
+  "pr_auc",
+  "top_decile_share"
+ ],
+ "test_models": [
+  "B0 zero lift",
+  "B3 ridge",
+  "B1 recent form",
+  "4B ridge",
+  "image ridge",
+  "combined",
+  "4B logistic"
+ ],
+ "validation_models": [
+  "B0 zero lift",
+  "B3 ridge",
+  "B1 recent form",
+  "4B ridge",
+  "image ridge",
+  "combined",
+  "has_video (a LEAK, not a model)"
+ ],
+ "test": {
+  "seen": {
+   "B0 zero lift": {
+    "MAE": {
+     "value": 0.375195,
+     "value_low": 0.350904,
+     "value_high": 0.401883,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 12455,
+     "creators": 138
+    },
+    "skill": {
+     "value": 0.0,
+     "value_low": 0.0,
+     "value_high": 0.0,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 12455,
+     "creators": 138
+    },
+    "spearman_within": {
+     "value": 0.0,
+     "value_low": 0.0,
+     "value_high": 0.0,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 12455,
+     "creators": 138
+    },
+    "roc_auc": {
+     "value": 0.5,
+     "value_low": 0.5,
+     "value_high": 0.5,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 12455,
+     "creators": 138
+    },
+    "pr_auc": {
+     "value": 0.247049,
+     "value_low": 0.227211,
+     "value_high": 0.264321,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 12455,
+     "creators": 138
+    },
+    "top_decile_share": {
+     "value": 0.252863,
+     "value_low": 0.230543,
+     "value_high": 0.274818,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 12455,
+     "creators": 138
+    }
+   },
+   "B3 ridge": {
+    "MAE": {
+     "value": 0.374681,
+     "value_low": 0.350787,
+     "value_high": 0.400798,
+     "gain": 0.000513,
+     "gain_low": 3.9e-05,
+     "gain_high": 0.001066,
+     "videos": 12455,
+     "creators": 138
+    },
+    "skill": {
+     "value": 0.004707,
+     "value_low": 0.00252,
+     "value_high": 0.007018,
+     "gain": 0.004707,
+     "gain_low": 0.00252,
+     "gain_high": 0.007018,
+     "videos": 12455,
+     "creators": 138
+    },
+    "spearman_within": {
+     "value": 0.07841,
+     "value_low": 0.046166,
+     "value_high": 0.114659,
+     "gain": 0.07841,
+     "gain_low": 0.046166,
+     "gain_high": 0.114659,
+     "videos": 12455,
+     "creators": 138
+    },
+    "roc_auc": {
+     "value": 0.537387,
+     "value_low": 0.516438,
+     "value_high": 0.55969,
+     "gain": 0.037387,
+     "gain_low": 0.016438,
+     "gain_high": 0.05969,
+     "videos": 12455,
+     "creators": 138
+    },
+    "pr_auc": {
+     "value": 0.266128,
+     "value_low": 0.243856,
+     "value_high": 0.287807,
+     "gain": 0.019079,
+     "gain_low": 0.007217,
+     "gain_high": 0.03518,
+     "videos": 12455,
+     "creators": 138
+    },
+    "top_decile_share": {
+     "value": 0.29458,
+     "value_low": 0.255506,
+     "value_high": 0.337085,
+     "gain": 0.041717,
+     "gain_low": 0.003993,
+     "gain_high": 0.080553,
+     "videos": 12455,
+     "creators": 138
+    }
+   },
+   "B1 recent form": {
+    "MAE": {
+     "value": 0.371906,
+     "value_low": 0.349067,
+     "value_high": 0.397048,
+     "gain": 0.003288,
+     "gain_low": 0.00042,
+     "gain_high": 0.006668,
+     "videos": 12455,
+     "creators": 138
+    },
+    "skill": {
+     "value": 0.035679,
+     "value_low": 0.022188,
+     "value_high": 0.050555,
+     "gain": 0.035679,
+     "gain_low": 0.022188,
+     "gain_high": 0.050555,
+     "videos": 12455,
+     "creators": 138
+    },
+    "spearman_within": {
+     "value": 0.153242,
+     "value_low": 0.117251,
+     "value_high": 0.193308,
+     "gain": 0.153242,
+     "gain_low": 0.117251,
+     "gain_high": 0.193308,
+     "videos": 12455,
+     "creators": 138
+    },
+    "roc_auc": {
+     "value": 0.597238,
+     "value_low": 0.575989,
+     "value_high": 0.624578,
+     "gain": 0.097238,
+     "gain_low": 0.075989,
+     "gain_high": 0.124578,
+     "videos": 12455,
+     "creators": 138
+    },
+    "pr_auc": {
+     "value": 0.338557,
+     "value_low": 0.315422,
+     "value_high": 0.364811,
+     "gain": 0.091508,
+     "gain_low": 0.070626,
+     "gain_high": 0.118289,
+     "videos": 12455,
+     "creators": 138
+    },
+    "top_decile_share": {
+     "value": 0.36824,
+     "value_low": 0.322236,
+     "value_high": 0.41463,
+     "gain": 0.115377,
+     "gain_low": 0.080003,
+     "gain_high": 0.151645,
+     "videos": 12455,
+     "creators": 138
+    }
+   },
+   "4B ridge": {
+    "MAE": {
+     "value": 0.364873,
+     "value_low": 0.342303,
+     "value_high": 0.391194,
+     "gain": 0.010322,
+     "gain_low": 0.006756,
+     "gain_high": 0.013825,
+     "videos": 12455,
+     "creators": 138
+    },
+    "skill": {
+     "value": 0.05564,
+     "value_low": 0.041985,
+     "value_high": 0.070313,
+     "gain": 0.05564,
+     "gain_low": 0.041985,
+     "gain_high": 0.070313,
+     "videos": 12455,
+     "creators": 138
+    },
+    "spearman_within": {
+     "value": 0.243565,
+     "value_low": 0.207629,
+     "value_high": 0.279048,
+     "gain": 0.243565,
+     "gain_low": 0.207629,
+     "gain_high": 0.279048,
+     "videos": 12455,
+     "creators": 138
+    },
+    "roc_auc": {
+     "value": 0.590852,
+     "value_low": 0.566645,
+     "value_high": 0.614639,
+     "gain": 0.090852,
+     "gain_low": 0.066645,
+     "gain_high": 0.114639,
+     "videos": 12455,
+     "creators": 138
+    },
+    "pr_auc": {
+     "value": 0.318562,
+     "value_low": 0.281503,
+     "value_high": 0.360169,
+     "gain": 0.071513,
+     "gain_low": 0.047186,
+     "gain_high": 0.101941,
+     "videos": 12455,
+     "creators": 138
+    },
+    "top_decile_share": {
+     "value": 0.39397,
+     "value_low": 0.343292,
+     "value_high": 0.447112,
+     "gain": 0.141107,
+     "gain_low": 0.099944,
+     "gain_high": 0.184621,
+     "videos": 12455,
+     "creators": 138
+    }
+   },
+   "image ridge": {
+    "MAE": {
+     "value": 0.364493,
+     "value_low": 0.342075,
+     "value_high": 0.390699,
+     "gain": 0.010702,
+     "gain_low": 0.006847,
+     "gain_high": 0.014529,
+     "videos": 12455,
+     "creators": 138
+    },
+    "skill": {
+     "value": 0.057477,
+     "value_low": 0.042569,
+     "value_high": 0.072849,
+     "gain": 0.057477,
+     "gain_low": 0.042569,
+     "gain_high": 0.072849,
+     "videos": 12455,
+     "creators": 138
+    },
+    "spearman_within": {
+     "value": 0.252722,
+     "value_low": 0.218894,
+     "value_high": 0.287426,
+     "gain": 0.252722,
+     "gain_low": 0.218894,
+     "gain_high": 0.287426,
+     "videos": 12455,
+     "creators": 138
+    },
+    "roc_auc": {
+     "value": 0.590467,
+     "value_low": 0.565475,
+     "value_high": 0.61427,
+     "gain": 0.090467,
+     "gain_low": 0.065475,
+     "gain_high": 0.11427,
+     "videos": 12455,
+     "creators": 138
+    },
+    "pr_auc": {
+     "value": 0.318221,
+     "value_low": 0.281188,
+     "value_high": 0.358876,
+     "gain": 0.071171,
+     "gain_low": 0.046678,
+     "gain_high": 0.099658,
+     "videos": 12455,
+     "creators": 138
+    },
+    "top_decile_share": {
+     "value": 0.393514,
+     "value_low": 0.343417,
+     "value_high": 0.445841,
+     "gain": 0.140651,
+     "gain_low": 0.100551,
+     "gain_high": 0.182991,
+     "videos": 12455,
+     "creators": 138
+    }
+   },
+   "combined": {
+    "MAE": {
+     "value": 0.359518,
+     "value_low": 0.338231,
+     "value_high": 0.383794,
+     "gain": 0.015676,
+     "gain_low": 0.010857,
+     "gain_high": 0.020952,
+     "videos": 12455,
+     "creators": 138
+    },
+    "skill": {
+     "value": 0.09041,
+     "value_low": 0.07051,
+     "value_high": 0.111286,
+     "gain": 0.09041,
+     "gain_low": 0.07051,
+     "gain_high": 0.111286,
+     "videos": 12455,
+     "creators": 138
+    },
+    "spearman_within": {
+     "value": 0.302991,
+     "value_low": 0.270136,
+     "value_high": 0.337619,
+     "gain": 0.302991,
+     "gain_low": 0.270136,
+     "gain_high": 0.337619,
+     "videos": 12455,
+     "creators": 138
+    },
+    "roc_auc": {
+     "value": 0.633338,
+     "value_low": 0.614457,
+     "value_high": 0.654414,
+     "gain": 0.133338,
+     "gain_low": 0.114457,
+     "gain_high": 0.154414,
+     "videos": 12455,
+     "creators": 138
+    },
+    "pr_auc": {
+     "value": 0.365358,
+     "value_low": 0.330111,
+     "value_high": 0.404008,
+     "gain": 0.118309,
+     "gain_low": 0.09453,
+     "gain_high": 0.148298,
+     "videos": 12455,
+     "creators": 138
+    },
+    "top_decile_share": {
+     "value": 0.435326,
+     "value_low": 0.38465,
+     "value_high": 0.488273,
+     "gain": 0.182463,
+     "gain_low": 0.13972,
+     "gain_high": 0.227075,
+     "videos": 12455,
+     "creators": 138
+    }
+   },
+   "4B logistic": {
+    "spearman_within": {
+     "value": 0.227618,
+     "value_low": 0.193518,
+     "value_high": 0.262811,
+     "gain": 0.227618,
+     "gain_low": 0.193518,
+     "gain_high": 0.262811,
+     "videos": 12455,
+     "creators": 138
+    },
+    "roc_auc": {
+     "value": 0.589434,
+     "value_low": 0.57092,
+     "value_high": 0.610119,
+     "gain": 0.089434,
+     "gain_low": 0.07092,
+     "gain_high": 0.110119,
+     "videos": 12455,
+     "creators": 138
+    },
+    "pr_auc": {
+     "value": 0.320947,
+     "value_low": 0.288209,
+     "value_high": 0.357544,
+     "gain": 0.073897,
+     "gain_low": 0.053035,
+     "gain_high": 0.099436,
+     "videos": 12455,
+     "creators": 138
+    },
+    "top_decile_share": {
+     "value": 0.379818,
+     "value_low": 0.335602,
+     "value_high": 0.42767,
+     "gain": 0.126955,
+     "gain_low": 0.091119,
+     "gain_high": 0.167015,
+     "videos": 12455,
+     "creators": 138
+    }
+   }
+  },
+  "unseen": {
+   "B0 zero lift": {
+    "MAE": {
+     "value": 0.377391,
+     "value_low": 0.342111,
+     "value_high": 0.411422,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 9285,
+     "creators": 81
+    },
+    "skill": {
+     "value": 0.0,
+     "value_low": 0.0,
+     "value_high": 0.0,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 9285,
+     "creators": 81
+    },
+    "spearman_within": {
+     "value": 0.0,
+     "value_low": 0.0,
+     "value_high": 0.0,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 9285,
+     "creators": 81
+    },
+    "roc_auc": {
+     "value": 0.5,
+     "value_low": 0.5,
+     "value_high": 0.5,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 9285,
+     "creators": 81
+    },
+    "pr_auc": {
+     "value": 0.247173,
+     "value_low": 0.221494,
+     "value_high": 0.271763,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 9285,
+     "creators": 81
+    },
+    "top_decile_share": {
+     "value": 0.235879,
+     "value_low": 0.210227,
+     "value_high": 0.262479,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 9285,
+     "creators": 81
+    }
+   },
+   "B3 ridge": {
+    "MAE": {
+     "value": 0.377075,
+     "value_low": 0.342255,
+     "value_high": 0.410767,
+     "gain": 0.000316,
+     "gain_low": -0.00022,
+     "gain_high": 0.000859,
+     "videos": 9285,
+     "creators": 81
+    },
+    "skill": {
+     "value": 0.002675,
+     "value_low": -0.000763,
+     "value_high": 0.00589,
+     "gain": 0.002675,
+     "gain_low": -0.000763,
+     "gain_high": 0.00589,
+     "videos": 9285,
+     "creators": 81
+    },
+    "spearman_within": {
+     "value": 0.04208,
+     "value_low": -0.002473,
+     "value_high": 0.089432,
+     "gain": 0.04208,
+     "gain_low": -0.002473,
+     "gain_high": 0.089432,
+     "videos": 9285,
+     "creators": 81
+    },
+    "roc_auc": {
+     "value": 0.543775,
+     "value_low": 0.520485,
+     "value_high": 0.561538,
+     "gain": 0.043775,
+     "gain_low": 0.020485,
+     "gain_high": 0.061538,
+     "videos": 9285,
+     "creators": 81
+    },
+    "pr_auc": {
+     "value": 0.272004,
+     "value_low": 0.244966,
+     "value_high": 0.297067,
+     "gain": 0.024831,
+     "gain_low": 0.007677,
+     "gain_high": 0.041545,
+     "videos": 9285,
+     "creators": 81
+    },
+    "top_decile_share": {
+     "value": 0.261517,
+     "value_low": 0.216002,
+     "value_high": 0.309449,
+     "gain": 0.025637,
+     "gain_low": -0.012553,
+     "gain_high": 0.06715,
+     "videos": 9285,
+     "creators": 81
+    }
+   },
+   "B1 recent form": {
+    "MAE": {
+     "value": 0.373071,
+     "value_low": 0.339445,
+     "value_high": 0.40528,
+     "gain": 0.00432,
+     "gain_low": 0.000757,
+     "gain_high": 0.007853,
+     "videos": 9285,
+     "creators": 81
+    },
+    "skill": {
+     "value": 0.035605,
+     "value_low": 0.021079,
+     "value_high": 0.047524,
+     "gain": 0.035605,
+     "gain_low": 0.021079,
+     "gain_high": 0.047524,
+     "videos": 9285,
+     "creators": 81
+    },
+    "spearman_within": {
+     "value": 0.118176,
+     "value_low": 0.074376,
+     "value_high": 0.158711,
+     "gain": 0.118176,
+     "gain_low": 0.074376,
+     "gain_high": 0.158711,
+     "videos": 9285,
+     "creators": 81
+    },
+    "roc_auc": {
+     "value": 0.59044,
+     "value_low": 0.567958,
+     "value_high": 0.615227,
+     "gain": 0.09044,
+     "gain_low": 0.067958,
+     "gain_high": 0.115227,
+     "videos": 9285,
+     "creators": 81
+    },
+    "pr_auc": {
+     "value": 0.337354,
+     "value_low": 0.288097,
+     "value_high": 0.389597,
+     "gain": 0.090181,
+     "gain_low": 0.055182,
+     "gain_high": 0.129139,
+     "videos": 9285,
+     "creators": 81
+    },
+    "top_decile_share": {
+     "value": 0.322837,
+     "value_low": 0.269396,
+     "value_high": 0.371849,
+     "gain": 0.086958,
+     "gain_low": 0.044452,
+     "gain_high": 0.128275,
+     "videos": 9285,
+     "creators": 81
+    }
+   },
+   "4B ridge": {
+    "MAE": {
+     "value": 0.370694,
+     "value_low": 0.337607,
+     "value_high": 0.402001,
+     "gain": 0.006697,
+     "gain_low": 0.003009,
+     "gain_high": 0.010393,
+     "videos": 9285,
+     "creators": 81
+    },
+    "skill": {
+     "value": 0.040185,
+     "value_low": 0.021911,
+     "value_high": 0.054991,
+     "gain": 0.040185,
+     "gain_low": 0.021911,
+     "gain_high": 0.054991,
+     "videos": 9285,
+     "creators": 81
+    },
+    "spearman_within": {
+     "value": 0.172055,
+     "value_low": 0.123889,
+     "value_high": 0.217684,
+     "gain": 0.172055,
+     "gain_low": 0.123889,
+     "gain_high": 0.217684,
+     "videos": 9285,
+     "creators": 81
+    },
+    "roc_auc": {
+     "value": 0.591751,
+     "value_low": 0.569232,
+     "value_high": 0.611006,
+     "gain": 0.091751,
+     "gain_low": 0.069232,
+     "gain_high": 0.111006,
+     "videos": 9285,
+     "creators": 81
+    },
+    "pr_auc": {
+     "value": 0.315199,
+     "value_low": 0.283318,
+     "value_high": 0.346322,
+     "gain": 0.068026,
+     "gain_low": 0.048242,
+     "gain_high": 0.089331,
+     "videos": 9285,
+     "creators": 81
+    },
+    "top_decile_share": {
+     "value": 0.333721,
+     "value_low": 0.280676,
+     "value_high": 0.387922,
+     "gain": 0.097842,
+     "gain_low": 0.054873,
+     "gain_high": 0.141606,
+     "videos": 9285,
+     "creators": 81
+    }
+   },
+   "image ridge": {
+    "MAE": {
+     "value": 0.370284,
+     "value_low": 0.3377,
+     "value_high": 0.400741,
+     "gain": 0.007107,
+     "gain_low": 0.002744,
+     "gain_high": 0.011625,
+     "videos": 9285,
+     "creators": 81
+    },
+    "skill": {
+     "value": 0.042929,
+     "value_low": 0.020962,
+     "value_high": 0.061076,
+     "gain": 0.042929,
+     "gain_low": 0.020962,
+     "gain_high": 0.061076,
+     "videos": 9285,
+     "creators": 81
+    },
+    "spearman_within": {
+     "value": 0.182471,
+     "value_low": 0.135169,
+     "value_high": 0.229083,
+     "gain": 0.182471,
+     "gain_low": 0.135169,
+     "gain_high": 0.229083,
+     "videos": 9285,
+     "creators": 81
+    },
+    "roc_auc": {
+     "value": 0.594113,
+     "value_low": 0.571332,
+     "value_high": 0.612797,
+     "gain": 0.094113,
+     "gain_low": 0.071332,
+     "gain_high": 0.112797,
+     "videos": 9285,
+     "creators": 81
+    },
+    "pr_auc": {
+     "value": 0.316053,
+     "value_low": 0.282893,
+     "value_high": 0.347657,
+     "gain": 0.06888,
+     "gain_low": 0.048497,
+     "gain_high": 0.091021,
+     "videos": 9285,
+     "creators": 81
+    },
+    "top_decile_share": {
+     "value": 0.335385,
+     "value_low": 0.281648,
+     "value_high": 0.391079,
+     "gain": 0.099506,
+     "gain_low": 0.058544,
+     "gain_high": 0.142311,
+     "videos": 9285,
+     "creators": 81
+    }
+   },
+   "combined": {
+    "MAE": {
+     "value": 0.365048,
+     "value_low": 0.333246,
+     "value_high": 0.394894,
+     "gain": 0.012343,
+     "gain_low": 0.006866,
+     "gain_high": 0.018137,
+     "videos": 9285,
+     "creators": 81
+    },
+    "skill": {
+     "value": 0.078116,
+     "value_low": 0.053138,
+     "value_high": 0.100828,
+     "gain": 0.078116,
+     "gain_low": 0.053138,
+     "gain_high": 0.100828,
+     "videos": 9285,
+     "creators": 81
+    },
+    "spearman_within": {
+     "value": 0.219863,
+     "value_low": 0.177316,
+     "value_high": 0.260931,
+     "gain": 0.219863,
+     "gain_low": 0.177316,
+     "gain_high": 0.260931,
+     "videos": 9285,
+     "creators": 81
+    },
+    "roc_auc": {
+     "value": 0.635884,
+     "value_low": 0.6137,
+     "value_high": 0.655357,
+     "gain": 0.135884,
+     "gain_low": 0.1137,
+     "gain_high": 0.155357,
+     "videos": 9285,
+     "creators": 81
+    },
+    "pr_auc": {
+     "value": 0.373748,
+     "value_low": 0.326422,
+     "value_high": 0.422976,
+     "gain": 0.126575,
+     "gain_low": 0.093737,
+     "gain_high": 0.16281,
+     "videos": 9285,
+     "creators": 81
+    },
+    "top_decile_share": {
+     "value": 0.38347,
+     "value_low": 0.327382,
+     "value_high": 0.440958,
+     "gain": 0.14759,
+     "gain_low": 0.103105,
+     "gain_high": 0.191159,
+     "videos": 9285,
+     "creators": 81
+    }
+   },
+   "4B logistic": {
+    "spearman_within": {
+     "value": 0.163751,
+     "value_low": 0.118917,
+     "value_high": 0.2059,
+     "gain": 0.163751,
+     "gain_low": 0.118917,
+     "gain_high": 0.2059,
+     "videos": 9285,
+     "creators": 81
+    },
+    "roc_auc": {
+     "value": 0.585021,
+     "value_low": 0.560413,
+     "value_high": 0.607026,
+     "gain": 0.085021,
+     "gain_low": 0.060413,
+     "gain_high": 0.107026,
+     "videos": 9285,
+     "creators": 81
+    },
+    "pr_auc": {
+     "value": 0.311307,
+     "value_low": 0.279093,
+     "value_high": 0.341647,
+     "gain": 0.064135,
+     "gain_low": 0.043826,
+     "gain_high": 0.085562,
+     "videos": 9285,
+     "creators": 81
+    },
+    "top_decile_share": {
+     "value": 0.315635,
+     "value_low": 0.267169,
+     "value_high": 0.368956,
+     "gain": 0.079755,
+     "gain_low": 0.038281,
+     "gain_high": 0.124864,
+     "videos": 9285,
+     "creators": 81
+    }
+   }
+  },
+  "new": {
+   "B0 zero lift": {
+    "MAE": {
+     "value": 0.367942,
+     "value_low": 0.320469,
+     "value_high": 0.416044,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 4901,
+     "creators": 39
+    },
+    "skill": {
+     "value": 0.0,
+     "value_low": 0.0,
+     "value_high": 0.0,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 4901,
+     "creators": 39
+    },
+    "spearman_within": {
+     "value": 0.0,
+     "value_low": 0.0,
+     "value_high": 0.0,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 4901,
+     "creators": 39
+    },
+    "roc_auc": {
+     "value": 0.5,
+     "value_low": 0.5,
+     "value_high": 0.5,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 4901,
+     "creators": 39
+    },
+    "pr_auc": {
+     "value": 0.238115,
+     "value_low": 0.203859,
+     "value_high": 0.274807,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 4901,
+     "creators": 39
+    },
+    "top_decile_share": {
+     "value": 0.230869,
+     "value_low": 0.195935,
+     "value_high": 0.264488,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 4901,
+     "creators": 39
+    }
+   },
+   "B3 ridge": {
+    "MAE": {
+     "value": 0.367615,
+     "value_low": 0.320524,
+     "value_high": 0.415364,
+     "gain": 0.000327,
+     "gain_low": -0.000377,
+     "gain_high": 0.001179,
+     "videos": 4901,
+     "creators": 39
+    },
+    "skill": {
+     "value": 0.004225,
+     "value_low": -0.00051,
+     "value_high": 0.00844,
+     "gain": 0.004225,
+     "gain_low": -0.00051,
+     "gain_high": 0.00844,
+     "videos": 4901,
+     "creators": 39
+    },
+    "spearman_within": {
+     "value": 0.039377,
+     "value_low": -0.033397,
+     "value_high": 0.114478,
+     "gain": 0.039377,
+     "gain_low": -0.033397,
+     "gain_high": 0.114478,
+     "videos": 4901,
+     "creators": 39
+    },
+    "roc_auc": {
+     "value": 0.556721,
+     "value_low": 0.520643,
+     "value_high": 0.574189,
+     "gain": 0.056721,
+     "gain_low": 0.020643,
+     "gain_high": 0.074189,
+     "videos": 4901,
+     "creators": 39
+    },
+    "pr_auc": {
+     "value": 0.265871,
+     "value_low": 0.231329,
+     "value_high": 0.298321,
+     "gain": 0.027756,
+     "gain_low": 0.00601,
+     "gain_high": 0.044369,
+     "videos": 4901,
+     "creators": 39
+    },
+    "top_decile_share": {
+     "value": 0.250999,
+     "value_low": 0.190457,
+     "value_high": 0.306426,
+     "gain": 0.020129,
+     "gain_low": -0.026536,
+     "gain_high": 0.066127,
+     "videos": 4901,
+     "creators": 39
+    }
+   },
+   "B1 recent form": {
+    "MAE": {
+     "value": 0.364963,
+     "value_low": 0.319043,
+     "value_high": 0.411385,
+     "gain": 0.002979,
+     "gain_low": -0.00122,
+     "gain_high": 0.007208,
+     "videos": 4901,
+     "creators": 39
+    },
+    "skill": {
+     "value": 0.02922,
+     "value_low": 0.016296,
+     "value_high": 0.040852,
+     "gain": 0.02922,
+     "gain_low": 0.016296,
+     "gain_high": 0.040852,
+     "videos": 4901,
+     "creators": 39
+    },
+    "spearman_within": {
+     "value": 0.112182,
+     "value_low": 0.055527,
+     "value_high": 0.167057,
+     "gain": 0.112182,
+     "gain_low": 0.055527,
+     "gain_high": 0.167057,
+     "videos": 4901,
+     "creators": 39
+    },
+    "roc_auc": {
+     "value": 0.580061,
+     "value_low": 0.557499,
+     "value_high": 0.614758,
+     "gain": 0.080061,
+     "gain_low": 0.057499,
+     "gain_high": 0.114758,
+     "videos": 4901,
+     "creators": 39
+    },
+    "pr_auc": {
+     "value": 0.302645,
+     "value_low": 0.263455,
+     "value_high": 0.354809,
+     "gain": 0.06453,
+     "gain_low": 0.04928,
+     "gain_high": 0.093352,
+     "videos": 4901,
+     "creators": 39
+    },
+    "top_decile_share": {
+     "value": 0.303423,
+     "value_low": 0.239251,
+     "value_high": 0.368222,
+     "gain": 0.072554,
+     "gain_low": 0.025128,
+     "gain_high": 0.120839,
+     "videos": 4901,
+     "creators": 39
+    }
+   },
+   "4B ridge": {
+    "MAE": {
+     "value": 0.361263,
+     "value_low": 0.316659,
+     "value_high": 0.407414,
+     "gain": 0.006679,
+     "gain_low": 0.002114,
+     "gain_high": 0.012297,
+     "videos": 4901,
+     "creators": 39
+    },
+    "skill": {
+     "value": 0.034495,
+     "value_low": 0.009377,
+     "value_high": 0.056637,
+     "gain": 0.034495,
+     "gain_low": 0.009377,
+     "gain_high": 0.056637,
+     "videos": 4901,
+     "creators": 39
+    },
+    "spearman_within": {
+     "value": 0.146177,
+     "value_low": 0.071733,
+     "value_high": 0.212136,
+     "gain": 0.146177,
+     "gain_low": 0.071733,
+     "gain_high": 0.212136,
+     "videos": 4901,
+     "creators": 39
+    },
+    "roc_auc": {
+     "value": 0.602339,
+     "value_low": 0.572986,
+     "value_high": 0.622581,
+     "gain": 0.102339,
+     "gain_low": 0.072986,
+     "gain_high": 0.122581,
+     "videos": 4901,
+     "creators": 39
+    },
+    "pr_auc": {
+     "value": 0.317957,
+     "value_low": 0.276197,
+     "value_high": 0.354844,
+     "gain": 0.079843,
+     "gain_low": 0.055826,
+     "gain_high": 0.102798,
+     "videos": 4901,
+     "creators": 39
+    },
+    "top_decile_share": {
+     "value": 0.314317,
+     "value_low": 0.23122,
+     "value_high": 0.39671,
+     "gain": 0.083448,
+     "gain_low": 0.020413,
+     "gain_high": 0.147511,
+     "videos": 4901,
+     "creators": 39
+    }
+   },
+   "image ridge": {
+    "MAE": {
+     "value": 0.361367,
+     "value_low": 0.317015,
+     "value_high": 0.40756,
+     "gain": 0.006574,
+     "gain_low": 0.001518,
+     "gain_high": 0.012711,
+     "videos": 4901,
+     "creators": 39
+    },
+    "skill": {
+     "value": 0.034244,
+     "value_low": 0.005245,
+     "value_high": 0.058194,
+     "gain": 0.034244,
+     "gain_low": 0.005245,
+     "gain_high": 0.058194,
+     "videos": 4901,
+     "creators": 39
+    },
+    "spearman_within": {
+     "value": 0.152653,
+     "value_low": 0.074878,
+     "value_high": 0.221463,
+     "gain": 0.152653,
+     "gain_low": 0.074878,
+     "gain_high": 0.221463,
+     "videos": 4901,
+     "creators": 39
+    },
+    "roc_auc": {
+     "value": 0.602141,
+     "value_low": 0.572517,
+     "value_high": 0.621403,
+     "gain": 0.102141,
+     "gain_low": 0.072517,
+     "gain_high": 0.121403,
+     "videos": 4901,
+     "creators": 39
+    },
+    "pr_auc": {
+     "value": 0.316563,
+     "value_low": 0.272867,
+     "value_high": 0.35527,
+     "gain": 0.078448,
+     "gain_low": 0.053969,
+     "gain_high": 0.101843,
+     "videos": 4901,
+     "creators": 39
+    },
+    "top_decile_share": {
+     "value": 0.30487,
+     "value_low": 0.217809,
+     "value_high": 0.390342,
+     "gain": 0.074,
+     "gain_low": 0.007375,
+     "gain_high": 0.14296,
+     "videos": 4901,
+     "creators": 39
+    }
+   },
+   "combined": {
+    "MAE": {
+     "value": 0.357948,
+     "value_low": 0.314122,
+     "value_high": 0.402797,
+     "gain": 0.009994,
+     "gain_low": 0.004722,
+     "gain_high": 0.016685,
+     "videos": 4901,
+     "creators": 39
+    },
+    "skill": {
+     "value": 0.06143,
+     "value_low": 0.038937,
+     "value_high": 0.082572,
+     "gain": 0.06143,
+     "gain_low": 0.038937,
+     "gain_high": 0.082572,
+     "videos": 4901,
+     "creators": 39
+    },
+    "spearman_within": {
+     "value": 0.195031,
+     "value_low": 0.129956,
+     "value_high": 0.252528,
+     "gain": 0.195031,
+     "gain_low": 0.129956,
+     "gain_high": 0.252528,
+     "videos": 4901,
+     "creators": 39
+    },
+    "roc_auc": {
+     "value": 0.629967,
+     "value_low": 0.602035,
+     "value_high": 0.655715,
+     "gain": 0.129967,
+     "gain_low": 0.102035,
+     "gain_high": 0.155715,
+     "videos": 4901,
+     "creators": 39
+    },
+    "pr_auc": {
+     "value": 0.348783,
+     "value_low": 0.306734,
+     "value_high": 0.392189,
+     "gain": 0.110669,
+     "gain_low": 0.086823,
+     "gain_high": 0.138964,
+     "videos": 4901,
+     "creators": 39
+    },
+    "top_decile_share": {
+     "value": 0.343655,
+     "value_low": 0.260243,
+     "value_high": 0.428346,
+     "gain": 0.112786,
+     "gain_low": 0.048785,
+     "gain_high": 0.177038,
+     "videos": 4901,
+     "creators": 39
+    }
+   },
+   "4B logistic": {
+    "spearman_within": {
+     "value": 0.154629,
+     "value_low": 0.089879,
+     "value_high": 0.223221,
+     "gain": 0.154629,
+     "gain_low": 0.089879,
+     "gain_high": 0.223221,
+     "videos": 4901,
+     "creators": 39
+    },
+    "roc_auc": {
+     "value": 0.594686,
+     "value_low": 0.560367,
+     "value_high": 0.615726,
+     "gain": 0.094686,
+     "gain_low": 0.060367,
+     "gain_high": 0.115726,
+     "videos": 4901,
+     "creators": 39
+    },
+    "pr_auc": {
+     "value": 0.316641,
+     "value_low": 0.273878,
+     "value_high": 0.355945,
+     "gain": 0.078527,
+     "gain_low": 0.053923,
+     "gain_high": 0.101949,
+     "videos": 4901,
+     "creators": 39
+    },
+    "top_decile_share": {
+     "value": 0.312784,
+     "value_low": 0.232998,
+     "value_high": 0.399173,
+     "gain": 0.081915,
+     "gain_low": 0.013089,
+     "gain_high": 0.1627,
+     "videos": 4901,
+     "creators": 39
+    }
+   }
+  },
+  "holdout": {
+   "B0 zero lift": {
+    "MAE": {
+     "value": 0.387955,
+     "value_low": 0.347656,
+     "value_high": 0.424841,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 4384,
+     "creators": 42
+    },
+    "skill": {
+     "value": 0.0,
+     "value_low": 0.0,
+     "value_high": 0.0,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 4384,
+     "creators": 42
+    },
+    "spearman_within": {
+     "value": 0.0,
+     "value_low": 0.0,
+     "value_high": 0.0,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 4384,
+     "creators": 42
+    },
+    "roc_auc": {
+     "value": 0.5,
+     "value_low": 0.5,
+     "value_high": 0.5,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 4384,
+     "creators": 42
+    },
+    "pr_auc": {
+     "value": 0.257299,
+     "value_low": 0.222132,
+     "value_high": 0.285944,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 4384,
+     "creators": 42
+    },
+    "top_decile_share": {
+     "value": 0.239979,
+     "value_low": 0.20395,
+     "value_high": 0.275893,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 4384,
+     "creators": 42
+    }
+   },
+   "B3 ridge": {
+    "MAE": {
+     "value": 0.38765,
+     "value_low": 0.347435,
+     "value_high": 0.424753,
+     "gain": 0.000305,
+     "gain_low": -0.000574,
+     "gain_high": 0.001094,
+     "videos": 4384,
+     "creators": 42
+    },
+    "skill": {
+     "value": 0.001137,
+     "value_low": -0.004031,
+     "value_high": 0.005905,
+     "gain": 0.001137,
+     "gain_low": -0.004031,
+     "gain_high": 0.005905,
+     "videos": 4384,
+     "creators": 42
+    },
+    "spearman_within": {
+     "value": 0.044292,
+     "value_low": -0.010209,
+     "value_high": 0.100059,
+     "gain": 0.044292,
+     "gain_low": -0.010209,
+     "gain_high": 0.100059,
+     "videos": 4384,
+     "creators": 42
+    },
+    "roc_auc": {
+     "value": 0.528923,
+     "value_low": 0.494352,
+     "value_high": 0.558498,
+     "gain": 0.028923,
+     "gain_low": -0.005648,
+     "gain_high": 0.058498,
+     "videos": 4384,
+     "creators": 42
+    },
+    "pr_auc": {
+     "value": 0.279345,
+     "value_low": 0.24161,
+     "value_high": 0.316003,
+     "gain": 0.022046,
+     "gain_low": -0.000598,
+     "gain_high": 0.052583,
+     "videos": 4384,
+     "creators": 42
+    },
+    "top_decile_share": {
+     "value": 0.270123,
+     "value_low": 0.205497,
+     "value_high": 0.33946,
+     "gain": 0.030144,
+     "gain_low": -0.027166,
+     "gain_high": 0.092032,
+     "videos": 4384,
+     "creators": 42
+    }
+   },
+   "B1 recent form": {
+    "MAE": {
+     "value": 0.382136,
+     "value_low": 0.343918,
+     "value_high": 0.417503,
+     "gain": 0.005819,
+     "gain_low": 0.000164,
+     "gain_high": 0.010702,
+     "videos": 4384,
+     "creators": 42
+    },
+    "skill": {
+     "value": 0.041941,
+     "value_low": 0.015695,
+     "value_high": 0.060029,
+     "gain": 0.041941,
+     "gain_low": 0.015695,
+     "gain_high": 0.060029,
+     "videos": 4384,
+     "creators": 42
+    },
+    "spearman_within": {
+     "value": 0.123081,
+     "value_low": 0.05706,
+     "value_high": 0.182147,
+     "gain": 0.123081,
+     "gain_low": 0.05706,
+     "gain_high": 0.182147,
+     "videos": 4384,
+     "creators": 42
+    },
+    "roc_auc": {
+     "value": 0.600181,
+     "value_low": 0.563463,
+     "value_high": 0.640491,
+     "gain": 0.100181,
+     "gain_low": 0.063463,
+     "gain_high": 0.140491,
+     "videos": 4384,
+     "creators": 42
+    },
+    "pr_auc": {
+     "value": 0.369424,
+     "value_low": 0.295322,
+     "value_high": 0.430814,
+     "gain": 0.112125,
+     "gain_low": 0.055543,
+     "gain_high": 0.160025,
+     "videos": 4384,
+     "creators": 42
+    },
+    "top_decile_share": {
+     "value": 0.338722,
+     "value_low": 0.265249,
+     "value_high": 0.412913,
+     "gain": 0.098743,
+     "gain_low": 0.03473,
+     "gain_high": 0.16429,
+     "videos": 4384,
+     "creators": 42
+    }
+   },
+   "4B ridge": {
+    "MAE": {
+     "value": 0.381238,
+     "value_low": 0.345338,
+     "value_high": 0.415486,
+     "gain": 0.006717,
+     "gain_low": 0.000866,
+     "gain_high": 0.011404,
+     "videos": 4384,
+     "creators": 42
+    },
+    "skill": {
+     "value": 0.045831,
+     "value_low": 0.018806,
+     "value_high": 0.063717,
+     "gain": 0.045831,
+     "gain_low": 0.018806,
+     "gain_high": 0.063717,
+     "videos": 4384,
+     "creators": 42
+    },
+    "spearman_within": {
+     "value": 0.193228,
+     "value_low": 0.13388,
+     "value_high": 0.25335,
+     "gain": 0.193228,
+     "gain_low": 0.13388,
+     "gain_high": 0.25335,
+     "videos": 4384,
+     "creators": 42
+    },
+    "roc_auc": {
+     "value": 0.582551,
+     "value_low": 0.54598,
+     "value_high": 0.614985,
+     "gain": 0.082551,
+     "gain_low": 0.04598,
+     "gain_high": 0.114985,
+     "videos": 4384,
+     "creators": 42
+    },
+    "pr_auc": {
+     "value": 0.314608,
+     "value_low": 0.264188,
+     "value_high": 0.366705,
+     "gain": 0.057309,
+     "gain_low": 0.027207,
+     "gain_high": 0.095802,
+     "videos": 4384,
+     "creators": 42
+    },
+    "top_decile_share": {
+     "value": 0.349598,
+     "value_low": 0.282747,
+     "value_high": 0.423655,
+     "gain": 0.109619,
+     "gain_low": 0.048335,
+     "gain_high": 0.174235,
+     "videos": 4384,
+     "creators": 42
+    }
+   },
+   "image ridge": {
+    "MAE": {
+     "value": 0.380252,
+     "value_low": 0.345008,
+     "value_high": 0.414253,
+     "gain": 0.007702,
+     "gain_low": 0.000494,
+     "gain_high": 0.013507,
+     "videos": 4384,
+     "creators": 42
+    },
+    "skill": {
+     "value": 0.051548,
+     "value_low": 0.017763,
+     "value_high": 0.073068,
+     "gain": 0.051548,
+     "gain_low": 0.017763,
+     "gain_high": 0.073068,
+     "videos": 4384,
+     "creators": 42
+    },
+    "spearman_within": {
+     "value": 0.206868,
+     "value_low": 0.152232,
+     "value_high": 0.265362,
+     "gain": 0.206868,
+     "gain_low": 0.152232,
+     "gain_high": 0.265362,
+     "videos": 4384,
+     "creators": 42
+    },
+    "roc_auc": {
+     "value": 0.586163,
+     "value_low": 0.551455,
+     "value_high": 0.6173,
+     "gain": 0.086163,
+     "gain_low": 0.051455,
+     "gain_high": 0.1173,
+     "videos": 4384,
+     "creators": 42
+    },
+    "pr_auc": {
+     "value": 0.317112,
+     "value_low": 0.265343,
+     "value_high": 0.369743,
+     "gain": 0.059812,
+     "gain_low": 0.030131,
+     "gain_high": 0.098735,
+     "videos": 4384,
+     "creators": 42
+    },
+    "top_decile_share": {
+     "value": 0.360352,
+     "value_low": 0.295675,
+     "value_high": 0.432457,
+     "gain": 0.120374,
+     "gain_low": 0.071637,
+     "gain_high": 0.175568,
+     "videos": 4384,
+     "creators": 42
+    }
+   },
+   "combined": {
+    "MAE": {
+     "value": 0.372986,
+     "value_low": 0.338563,
+     "value_high": 0.406597,
+     "gain": 0.014969,
+     "gain_low": 0.005875,
+     "gain_high": 0.022479,
+     "videos": 4384,
+     "creators": 42
+    },
+    "skill": {
+     "value": 0.094674,
+     "value_low": 0.05572,
+     "value_high": 0.123157,
+     "gain": 0.094674,
+     "gain_low": 0.05572,
+     "gain_high": 0.123157,
+     "videos": 4384,
+     "creators": 42
+    },
+    "spearman_within": {
+     "value": 0.24018,
+     "value_low": 0.185026,
+     "value_high": 0.295102,
+     "gain": 0.24018,
+     "gain_low": 0.185026,
+     "gain_high": 0.295102,
+     "videos": 4384,
+     "creators": 42
+    },
+    "roc_auc": {
+     "value": 0.642406,
+     "value_low": 0.60776,
+     "value_high": 0.670354,
+     "gain": 0.142406,
+     "gain_low": 0.10776,
+     "gain_high": 0.170354,
+     "videos": 4384,
+     "creators": 42
+    },
+    "pr_auc": {
+     "value": 0.400681,
+     "value_low": 0.321242,
+     "value_high": 0.46758,
+     "gain": 0.143382,
+     "gain_low": 0.085948,
+     "gain_high": 0.191753,
+     "videos": 4384,
+     "creators": 42
+    },
+    "top_decile_share": {
+     "value": 0.416045,
+     "value_low": 0.346677,
+     "value_high": 0.487156,
+     "gain": 0.176066,
+     "gain_low": 0.117365,
+     "gain_high": 0.237414,
+     "videos": 4384,
+     "creators": 42
+    }
+   },
+   "4B logistic": {
+    "spearman_within": {
+     "value": 0.171215,
+     "value_low": 0.11727,
+     "value_high": 0.2242,
+     "gain": 0.171215,
+     "gain_low": 0.11727,
+     "gain_high": 0.2242,
+     "videos": 4384,
+     "creators": 42
+    },
+    "roc_auc": {
+     "value": 0.573782,
+     "value_low": 0.538486,
+     "value_high": 0.609406,
+     "gain": 0.073782,
+     "gain_low": 0.038486,
+     "gain_high": 0.109406,
+     "videos": 4384,
+     "creators": 42
+    },
+    "pr_auc": {
+     "value": 0.306929,
+     "value_low": 0.258139,
+     "value_high": 0.356148,
+     "gain": 0.04963,
+     "gain_low": 0.021078,
+     "gain_high": 0.084664,
+     "videos": 4384,
+     "creators": 42
+    },
+    "top_decile_share": {
+     "value": 0.317968,
+     "value_low": 0.257932,
+     "value_high": 0.382322,
+     "gain": 0.077989,
+     "gain_low": 0.027714,
+     "gain_high": 0.129136,
+     "videos": 4384,
+     "creators": 42
+    }
+   }
+  }
+ },
+ "validation": {
+  "seen": {
+   "B0 zero lift": {
+    "MAE": {
+     "value": 0.368709,
+     "value_low": 0.341378,
+     "value_high": 0.396584,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 13646,
+     "creators": 138
+    },
+    "skill": {
+     "value": 0.0,
+     "value_low": 0.0,
+     "value_high": 0.0,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 13646,
+     "creators": 138
+    },
+    "spearman_within": {
+     "value": 0.0,
+     "value_low": 0.0,
+     "value_high": 0.0,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 13646,
+     "creators": 138
+    },
+    "roc_auc": {
+     "value": 0.5,
+     "value_low": 0.5,
+     "value_high": 0.5,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 13646,
+     "creators": 138
+    },
+    "pr_auc": {
+     "value": 0.241023,
+     "value_low": 0.215535,
+     "value_high": 0.265571,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 13646,
+     "creators": 138
+    },
+    "top_decile_share": {
+     "value": 0.247,
+     "value_low": 0.230578,
+     "value_high": 0.263922,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 13646,
+     "creators": 138
+    }
+   },
+   "B3 ridge": {
+    "MAE": {
+     "value": 0.368056,
+     "value_low": 0.340845,
+     "value_high": 0.395688,
+     "gain": 0.000653,
+     "gain_low": 0.000248,
+     "gain_high": 0.001125,
+     "videos": 13646,
+     "creators": 138
+    },
+    "skill": {
+     "value": 0.003938,
+     "value_low": 0.001712,
+     "value_high": 0.006366,
+     "gain": 0.003938,
+     "gain_low": 0.001712,
+     "gain_high": 0.006366,
+     "videos": 13646,
+     "creators": 138
+    },
+    "spearman_within": {
+     "value": 0.071321,
+     "value_low": 0.042854,
+     "value_high": 0.101135,
+     "gain": 0.071321,
+     "gain_low": 0.042854,
+     "gain_high": 0.101135,
+     "videos": 13646,
+     "creators": 138
+    },
+    "roc_auc": {
+     "value": 0.536378,
+     "value_low": 0.510139,
+     "value_high": 0.563026,
+     "gain": 0.036378,
+     "gain_low": 0.010139,
+     "gain_high": 0.063026,
+     "videos": 13646,
+     "creators": 138
+    },
+    "pr_auc": {
+     "value": 0.263119,
+     "value_low": 0.244912,
+     "value_high": 0.283298,
+     "gain": 0.022096,
+     "gain_low": 0.007963,
+     "gain_high": 0.038358,
+     "videos": 13646,
+     "creators": 138
+    },
+    "top_decile_share": {
+     "value": 0.289512,
+     "value_low": 0.255468,
+     "value_high": 0.327508,
+     "gain": 0.042512,
+     "gain_low": 0.011074,
+     "gain_high": 0.078181,
+     "videos": 13646,
+     "creators": 138
+    }
+   },
+   "B1 recent form": {
+    "MAE": {
+     "value": 0.36618,
+     "value_low": 0.339356,
+     "value_high": 0.393877,
+     "gain": 0.002529,
+     "gain_low": -0.000478,
+     "gain_high": 0.005323,
+     "videos": 13646,
+     "creators": 138
+    },
+    "skill": {
+     "value": 0.033617,
+     "value_low": 0.021811,
+     "value_high": 0.048476,
+     "gain": 0.033617,
+     "gain_low": 0.021811,
+     "gain_high": 0.048476,
+     "videos": 13646,
+     "creators": 138
+    },
+    "spearman_within": {
+     "value": 0.146036,
+     "value_low": 0.111097,
+     "value_high": 0.179832,
+     "gain": 0.146036,
+     "gain_low": 0.111097,
+     "gain_high": 0.179832,
+     "videos": 13646,
+     "creators": 138
+    },
+    "roc_auc": {
+     "value": 0.587861,
+     "value_low": 0.570297,
+     "value_high": 0.605111,
+     "gain": 0.087861,
+     "gain_low": 0.070297,
+     "gain_high": 0.105111,
+     "videos": 13646,
+     "creators": 138
+    },
+    "pr_auc": {
+     "value": 0.31125,
+     "value_low": 0.284907,
+     "value_high": 0.337822,
+     "gain": 0.070227,
+     "gain_low": 0.055508,
+     "gain_high": 0.086195,
+     "videos": 13646,
+     "creators": 138
+    },
+    "top_decile_share": {
+     "value": 0.320276,
+     "value_low": 0.284661,
+     "value_high": 0.356265,
+     "gain": 0.073276,
+     "gain_low": 0.041552,
+     "gain_high": 0.103714,
+     "videos": 13646,
+     "creators": 138
+    }
+   },
+   "4B ridge": {
+    "MAE": {
+     "value": 0.358323,
+     "value_low": 0.334362,
+     "value_high": 0.383576,
+     "gain": 0.010386,
+     "gain_low": 0.006858,
+     "gain_high": 0.014069,
+     "videos": 13646,
+     "creators": 138
+    },
+    "skill": {
+     "value": 0.0559,
+     "value_low": 0.038203,
+     "value_high": 0.072438,
+     "gain": 0.0559,
+     "gain_low": 0.038203,
+     "gain_high": 0.072438,
+     "videos": 13646,
+     "creators": 138
+    },
+    "spearman_within": {
+     "value": 0.224109,
+     "value_low": 0.190979,
+     "value_high": 0.257319,
+     "gain": 0.224109,
+     "gain_low": 0.190979,
+     "gain_high": 0.257319,
+     "videos": 13646,
+     "creators": 138
+    },
+    "roc_auc": {
+     "value": 0.592257,
+     "value_low": 0.577511,
+     "value_high": 0.607782,
+     "gain": 0.092257,
+     "gain_low": 0.077511,
+     "gain_high": 0.107782,
+     "videos": 13646,
+     "creators": 138
+    },
+    "pr_auc": {
+     "value": 0.310077,
+     "value_low": 0.279048,
+     "value_high": 0.343029,
+     "gain": 0.069054,
+     "gain_low": 0.057714,
+     "gain_high": 0.08175,
+     "videos": 13646,
+     "creators": 138
+    },
+    "top_decile_share": {
+     "value": 0.362583,
+     "value_low": 0.322551,
+     "value_high": 0.405163,
+     "gain": 0.115583,
+     "gain_low": 0.078262,
+     "gain_high": 0.154055,
+     "videos": 13646,
+     "creators": 138
+    }
+   },
+   "image ridge": {
+    "MAE": {
+     "value": 0.357995,
+     "value_low": 0.334202,
+     "value_high": 0.383301,
+     "gain": 0.010714,
+     "gain_low": 0.007026,
+     "gain_high": 0.014508,
+     "videos": 13646,
+     "creators": 138
+    },
+    "skill": {
+     "value": 0.058023,
+     "value_low": 0.040059,
+     "value_high": 0.074958,
+     "gain": 0.058023,
+     "gain_low": 0.040059,
+     "gain_high": 0.074958,
+     "videos": 13646,
+     "creators": 138
+    },
+    "spearman_within": {
+     "value": 0.229241,
+     "value_low": 0.193888,
+     "value_high": 0.264685,
+     "gain": 0.229241,
+     "gain_low": 0.193888,
+     "gain_high": 0.264685,
+     "videos": 13646,
+     "creators": 138
+    },
+    "roc_auc": {
+     "value": 0.592217,
+     "value_low": 0.578245,
+     "value_high": 0.605322,
+     "gain": 0.092217,
+     "gain_low": 0.078245,
+     "gain_high": 0.105322,
+     "videos": 13646,
+     "creators": 138
+    },
+    "pr_auc": {
+     "value": 0.309354,
+     "value_low": 0.280424,
+     "value_high": 0.341011,
+     "gain": 0.068331,
+     "gain_low": 0.055866,
+     "gain_high": 0.08077,
+     "videos": 13646,
+     "creators": 138
+    },
+    "top_decile_share": {
+     "value": 0.383233,
+     "value_low": 0.342733,
+     "value_high": 0.425939,
+     "gain": 0.136233,
+     "gain_low": 0.09851,
+     "gain_high": 0.172501,
+     "videos": 13646,
+     "creators": 138
+    }
+   },
+   "combined": {
+    "MAE": {
+     "value": 0.352788,
+     "value_low": 0.329559,
+     "value_high": 0.377686,
+     "gain": 0.015921,
+     "gain_low": 0.010795,
+     "gain_high": 0.020591,
+     "videos": 13646,
+     "creators": 138
+    },
+    "skill": {
+     "value": 0.094331,
+     "value_low": 0.074277,
+     "value_high": 0.111471,
+     "gain": 0.094331,
+     "gain_low": 0.074277,
+     "gain_high": 0.111471,
+     "videos": 13646,
+     "creators": 138
+    },
+    "spearman_within": {
+     "value": 0.275482,
+     "value_low": 0.242849,
+     "value_high": 0.307612,
+     "gain": 0.275482,
+     "gain_low": 0.242849,
+     "gain_high": 0.307612,
+     "videos": 13646,
+     "creators": 138
+    },
+    "roc_auc": {
+     "value": 0.62968,
+     "value_low": 0.612118,
+     "value_high": 0.646397,
+     "gain": 0.12968,
+     "gain_low": 0.112118,
+     "gain_high": 0.146397,
+     "videos": 13646,
+     "creators": 138
+    },
+    "pr_auc": {
+     "value": 0.354138,
+     "value_low": 0.318646,
+     "value_high": 0.389701,
+     "gain": 0.113115,
+     "gain_low": 0.096806,
+     "gain_high": 0.131376,
+     "videos": 13646,
+     "creators": 138
+    },
+    "top_decile_share": {
+     "value": 0.392723,
+     "value_low": 0.352179,
+     "value_high": 0.433774,
+     "gain": 0.145723,
+     "gain_low": 0.108723,
+     "gain_high": 0.181212,
+     "videos": 13646,
+     "creators": 138
+    }
+   },
+   "has_video (a LEAK, not a model)": {
+    "MAE": {
+     "value": 0.349605,
+     "value_low": 0.321622,
+     "value_high": 0.378413,
+     "gain": 0.019104,
+     "gain_low": 0.011426,
+     "gain_high": 0.02817,
+     "videos": 13646,
+     "creators": 138
+    },
+    "skill": {
+     "value": 0.101503,
+     "value_low": 0.060611,
+     "value_high": 0.141843,
+     "gain": 0.101503,
+     "gain_low": 0.060611,
+     "gain_high": 0.141843,
+     "videos": 13646,
+     "creators": 138
+    },
+    "spearman_within": {
+     "value": 0.520906,
+     "value_low": 0.459688,
+     "value_high": 0.57746,
+     "gain": 0.520906,
+     "gain_low": 0.459688,
+     "gain_high": 0.57746,
+     "videos": 13646,
+     "creators": 138
+    },
+    "roc_auc": {
+     "value": 0.692609,
+     "value_low": 0.647954,
+     "value_high": 0.740727,
+     "gain": 0.192609,
+     "gain_low": 0.147954,
+     "gain_high": 0.240727,
+     "videos": 13646,
+     "creators": 138
+    },
+    "pr_auc": {
+     "value": 0.37107,
+     "value_low": 0.332566,
+     "value_high": 0.42524,
+     "gain": 0.130046,
+     "gain_low": 0.08943,
+     "gain_high": 0.188467,
+     "videos": 13646,
+     "creators": 138
+    },
+    "top_decile_share": {
+     "value": 0.63301,
+     "value_low": 0.575855,
+     "value_high": 0.693021,
+     "gain": 0.386009,
+     "gain_low": 0.332416,
+     "gain_high": 0.441288,
+     "videos": 13646,
+     "creators": 138
+    }
+   }
+  },
+  "new": {
+   "B0 zero lift": {
+    "MAE": {
+     "value": 0.376966,
+     "value_low": 0.330914,
+     "value_high": 0.433041,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 2275,
+     "creators": 27
+    },
+    "skill": {
+     "value": 0.0,
+     "value_low": 0.0,
+     "value_high": 0.0,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 2275,
+     "creators": 27
+    },
+    "spearman_within": {
+     "value": 0.0,
+     "value_low": 0.0,
+     "value_high": 0.0,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 2275,
+     "creators": 27
+    },
+    "roc_auc": {
+     "value": 0.5,
+     "value_low": 0.5,
+     "value_high": 0.5,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 2275,
+     "creators": 27
+    },
+    "pr_auc": {
+     "value": 0.265495,
+     "value_low": 0.223804,
+     "value_high": 0.323117,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 2275,
+     "creators": 27
+    },
+    "top_decile_share": {
+     "value": 0.288521,
+     "value_low": 0.239111,
+     "value_high": 0.343129,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 2275,
+     "creators": 27
+    }
+   },
+   "B3 ridge": {
+    "MAE": {
+     "value": 0.377381,
+     "value_low": 0.331349,
+     "value_high": 0.434323,
+     "gain": -0.000416,
+     "gain_low": -0.003023,
+     "gain_high": 0.000935,
+     "videos": 2275,
+     "creators": 27
+    },
+    "skill": {
+     "value": -0.003249,
+     "value_low": -0.015342,
+     "value_high": 0.005365,
+     "gain": -0.003249,
+     "gain_low": -0.015342,
+     "gain_high": 0.005365,
+     "videos": 2275,
+     "creators": 27
+    },
+    "spearman_within": {
+     "value": -0.012611,
+     "value_low": -0.10314,
+     "value_high": 0.073335,
+     "gain": -0.012611,
+     "gain_low": -0.10314,
+     "gain_high": 0.073335,
+     "videos": 2275,
+     "creators": 27
+    },
+    "roc_auc": {
+     "value": 0.504627,
+     "value_low": 0.428961,
+     "value_high": 0.552505,
+     "gain": 0.004627,
+     "gain_low": -0.071039,
+     "gain_high": 0.052505,
+     "videos": 2275,
+     "creators": 27
+    },
+    "pr_auc": {
+     "value": 0.265329,
+     "value_low": 0.21969,
+     "value_high": 0.317997,
+     "gain": -0.000166,
+     "gain_low": -0.033079,
+     "gain_high": 0.029774,
+     "videos": 2275,
+     "creators": 27
+    },
+    "top_decile_share": {
+     "value": 0.298654,
+     "value_low": 0.195768,
+     "value_high": 0.406078,
+     "gain": 0.010133,
+     "gain_low": -0.074492,
+     "gain_high": 0.100257,
+     "videos": 2275,
+     "creators": 27
+    }
+   },
+   "B1 recent form": {
+    "MAE": {
+     "value": 0.37504,
+     "value_low": 0.329309,
+     "value_high": 0.431913,
+     "gain": 0.001926,
+     "gain_low": -0.00577,
+     "gain_high": 0.007263,
+     "videos": 2275,
+     "creators": 27
+    },
+    "skill": {
+     "value": 0.015198,
+     "value_low": -0.018463,
+     "value_high": 0.039552,
+     "gain": 0.015198,
+     "gain_low": -0.018463,
+     "gain_high": 0.039552,
+     "videos": 2275,
+     "creators": 27
+    },
+    "spearman_within": {
+     "value": 0.102695,
+     "value_low": 0.036828,
+     "value_high": 0.162113,
+     "gain": 0.102695,
+     "gain_low": 0.036828,
+     "gain_high": 0.162113,
+     "videos": 2275,
+     "creators": 27
+    },
+    "roc_auc": {
+     "value": 0.579983,
+     "value_low": 0.534024,
+     "value_high": 0.610458,
+     "gain": 0.079983,
+     "gain_low": 0.034024,
+     "gain_high": 0.110458,
+     "videos": 2275,
+     "creators": 27
+    },
+    "pr_auc": {
+     "value": 0.305935,
+     "value_low": 0.26032,
+     "value_high": 0.359899,
+     "gain": 0.04044,
+     "gain_low": 0.011253,
+     "gain_high": 0.0673,
+     "videos": 2275,
+     "creators": 27
+    },
+    "top_decile_share": {
+     "value": 0.354606,
+     "value_low": 0.262231,
+     "value_high": 0.456168,
+     "gain": 0.066085,
+     "gain_low": -0.004163,
+     "gain_high": 0.13771,
+     "videos": 2275,
+     "creators": 27
+    }
+   },
+   "4B ridge": {
+    "MAE": {
+     "value": 0.367014,
+     "value_low": 0.322981,
+     "value_high": 0.420126,
+     "gain": 0.009952,
+     "gain_low": 0.00295,
+     "gain_high": 0.017184,
+     "videos": 2275,
+     "creators": 27
+    },
+    "skill": {
+     "value": 0.043147,
+     "value_low": 0.01048,
+     "value_high": 0.076918,
+     "gain": 0.043147,
+     "gain_low": 0.01048,
+     "gain_high": 0.076918,
+     "videos": 2275,
+     "creators": 27
+    },
+    "spearman_within": {
+     "value": 0.20911,
+     "value_low": 0.131871,
+     "value_high": 0.281479,
+     "gain": 0.20911,
+     "gain_low": 0.131871,
+     "gain_high": 0.281479,
+     "videos": 2275,
+     "creators": 27
+    },
+    "roc_auc": {
+     "value": 0.597388,
+     "value_low": 0.545166,
+     "value_high": 0.637343,
+     "gain": 0.097388,
+     "gain_low": 0.045166,
+     "gain_high": 0.137343,
+     "videos": 2275,
+     "creators": 27
+    },
+    "pr_auc": {
+     "value": 0.341101,
+     "value_low": 0.265873,
+     "value_high": 0.424176,
+     "gain": 0.075606,
+     "gain_low": 0.026784,
+     "gain_high": 0.124493,
+     "videos": 2275,
+     "creators": 27
+    },
+    "top_decile_share": {
+     "value": 0.374976,
+     "value_low": 0.286673,
+     "value_high": 0.468588,
+     "gain": 0.086455,
+     "gain_low": 0.013498,
+     "gain_high": 0.158039,
+     "videos": 2275,
+     "creators": 27
+    }
+   },
+   "image ridge": {
+    "MAE": {
+     "value": 0.367066,
+     "value_low": 0.323237,
+     "value_high": 0.420356,
+     "gain": 0.0099,
+     "gain_low": 0.002019,
+     "gain_high": 0.017608,
+     "videos": 2275,
+     "creators": 27
+    },
+    "skill": {
+     "value": 0.042713,
+     "value_low": 0.007787,
+     "value_high": 0.078527,
+     "gain": 0.042713,
+     "gain_low": 0.007787,
+     "gain_high": 0.078527,
+     "videos": 2275,
+     "creators": 27
+    },
+    "spearman_within": {
+     "value": 0.19997,
+     "value_low": 0.118576,
+     "value_high": 0.279359,
+     "gain": 0.19997,
+     "gain_low": 0.118576,
+     "gain_high": 0.279359,
+     "videos": 2275,
+     "creators": 27
+    },
+    "roc_auc": {
+     "value": 0.594447,
+     "value_low": 0.542402,
+     "value_high": 0.634647,
+     "gain": 0.094447,
+     "gain_low": 0.042402,
+     "gain_high": 0.134647,
+     "videos": 2275,
+     "creators": 27
+    },
+    "pr_auc": {
+     "value": 0.337401,
+     "value_low": 0.266907,
+     "value_high": 0.421123,
+     "gain": 0.071907,
+     "gain_low": 0.024956,
+     "gain_high": 0.12305,
+     "videos": 2275,
+     "creators": 27
+    },
+    "top_decile_share": {
+     "value": 0.393566,
+     "value_low": 0.304055,
+     "value_high": 0.481501,
+     "gain": 0.105045,
+     "gain_low": 0.033931,
+     "gain_high": 0.173451,
+     "videos": 2275,
+     "creators": 27
+    }
+   },
+   "combined": {
+    "MAE": {
+     "value": 0.363708,
+     "value_low": 0.319342,
+     "value_high": 0.416985,
+     "gain": 0.013257,
+     "gain_low": 0.00145,
+     "gain_high": 0.022805,
+     "videos": 2275,
+     "creators": 27
+    },
+    "skill": {
+     "value": 0.062086,
+     "value_low": 0.01312,
+     "value_high": 0.10005,
+     "gain": 0.062086,
+     "gain_low": 0.01312,
+     "gain_high": 0.10005,
+     "videos": 2275,
+     "creators": 27
+    },
+    "spearman_within": {
+     "value": 0.2395,
+     "value_low": 0.161809,
+     "value_high": 0.315072,
+     "gain": 0.2395,
+     "gain_low": 0.161809,
+     "gain_high": 0.315072,
+     "videos": 2275,
+     "creators": 27
+    },
+    "roc_auc": {
+     "value": 0.625641,
+     "value_low": 0.566723,
+     "value_high": 0.667963,
+     "gain": 0.125641,
+     "gain_low": 0.066723,
+     "gain_high": 0.167963,
+     "videos": 2275,
+     "creators": 27
+    },
+    "pr_auc": {
+     "value": 0.349184,
+     "value_low": 0.277148,
+     "value_high": 0.423791,
+     "gain": 0.08369,
+     "gain_low": 0.035588,
+     "gain_high": 0.133727,
+     "videos": 2275,
+     "creators": 27
+    },
+    "top_decile_share": {
+     "value": 0.43622,
+     "value_low": 0.348209,
+     "value_high": 0.525695,
+     "gain": 0.1477,
+     "gain_low": 0.079945,
+     "gain_high": 0.222027,
+     "videos": 2275,
+     "creators": 27
+    }
+   },
+   "has_video (a LEAK, not a model)": {
+    "MAE": {
+     "value": 0.348535,
+     "value_low": 0.300305,
+     "value_high": 0.397629,
+     "gain": 0.02843,
+     "gain_low": 4e-05,
+     "gain_high": 0.05831,
+     "videos": 2275,
+     "creators": 27
+    },
+    "skill": {
+     "value": 0.127833,
+     "value_low": 0.010867,
+     "value_high": 0.233491,
+     "gain": 0.127833,
+     "gain_low": 0.010867,
+     "gain_high": 0.233491,
+     "videos": 2275,
+     "creators": 27
+    },
+    "spearman_within": {
+     "value": 0.491687,
+     "value_low": 0.348717,
+     "value_high": 0.62749,
+     "gain": 0.491687,
+     "gain_low": 0.348717,
+     "gain_high": 0.62749,
+     "videos": 2275,
+     "creators": 27
+    },
+    "roc_auc": {
+     "value": 0.672645,
+     "value_low": 0.577242,
+     "value_high": 0.781909,
+     "gain": 0.172645,
+     "gain_low": 0.077242,
+     "gain_high": 0.281909,
+     "videos": 2275,
+     "creators": 27
+    },
+    "pr_auc": {
+     "value": 0.362829,
+     "value_low": 0.270386,
+     "value_high": 0.498598,
+     "gain": 0.097334,
+     "gain_low": 0.032881,
+     "gain_high": 0.216901,
+     "videos": 2275,
+     "creators": 27
+    },
+    "top_decile_share": {
+     "value": 0.496215,
+     "value_low": 0.401005,
+     "value_high": 0.601441,
+     "gain": 0.207694,
+     "gain_low": 0.116027,
+     "gain_high": 0.309548,
+     "videos": 2275,
+     "creators": 27
+    }
+   }
+  },
+  "holdout": {
+   "B0 zero lift": {
+    "MAE": {
+     "value": 0.375183,
+     "value_low": 0.336438,
+     "value_high": 0.417514,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 5411,
+     "creators": 38
+    },
+    "skill": {
+     "value": 0.0,
+     "value_low": 0.0,
+     "value_high": 0.0,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 5411,
+     "creators": 38
+    },
+    "spearman_within": {
+     "value": 0.0,
+     "value_low": 0.0,
+     "value_high": 0.0,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 5411,
+     "creators": 38
+    },
+    "roc_auc": {
+     "value": 0.5,
+     "value_low": 0.5,
+     "value_high": 0.5,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 5411,
+     "creators": 38
+    },
+    "pr_auc": {
+     "value": 0.233598,
+     "value_low": 0.198602,
+     "value_high": 0.261285,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 5411,
+     "creators": 38
+    },
+    "top_decile_share": {
+     "value": 0.22824,
+     "value_low": 0.184533,
+     "value_high": 0.273832,
+     "gain": 0.0,
+     "gain_low": 0.0,
+     "gain_high": 0.0,
+     "videos": 5411,
+     "creators": 38
+    }
+   },
+   "B3 ridge": {
+    "MAE": {
+     "value": 0.374258,
+     "value_low": 0.335467,
+     "value_high": 0.416162,
+     "gain": 0.000925,
+     "gain_low": -3.2e-05,
+     "gain_high": 0.001703,
+     "videos": 5411,
+     "creators": 38
+    },
+    "skill": {
+     "value": 0.00538,
+     "value_low": -0.000445,
+     "value_high": 0.010059,
+     "gain": 0.00538,
+     "gain_low": -0.000445,
+     "gain_high": 0.010059,
+     "videos": 5411,
+     "creators": 38
+    },
+    "spearman_within": {
+     "value": 0.083025,
+     "value_low": 0.018395,
+     "value_high": 0.147193,
+     "gain": 0.083025,
+     "gain_low": 0.018395,
+     "gain_high": 0.147193,
+     "videos": 5411,
+     "creators": 38
+    },
+    "roc_auc": {
+     "value": 0.525261,
+     "value_low": 0.494658,
+     "value_high": 0.558757,
+     "gain": 0.025261,
+     "gain_low": -0.005342,
+     "gain_high": 0.058757,
+     "videos": 5411,
+     "creators": 38
+    },
+    "pr_auc": {
+     "value": 0.250321,
+     "value_low": 0.213204,
+     "value_high": 0.29224,
+     "gain": 0.016723,
+     "gain_low": 7e-05,
+     "gain_high": 0.043025,
+     "videos": 5411,
+     "creators": 38
+    },
+    "top_decile_share": {
+     "value": 0.246998,
+     "value_low": 0.186594,
+     "value_high": 0.312268,
+     "gain": 0.018758,
+     "gain_low": -0.034092,
+     "gain_high": 0.071222,
+     "videos": 5411,
+     "creators": 38
+    }
+   },
+   "B1 recent form": {
+    "MAE": {
+     "value": 0.374729,
+     "value_low": 0.337711,
+     "value_high": 0.415971,
+     "gain": 0.000454,
+     "gain_low": -0.010121,
+     "gain_high": 0.007672,
+     "videos": 5411,
+     "creators": 38
+    },
+    "skill": {
+     "value": 0.0512,
+     "value_low": 0.023153,
+     "value_high": 0.073304,
+     "gain": 0.0512,
+     "gain_low": 0.023153,
+     "gain_high": 0.073304,
+     "videos": 5411,
+     "creators": 38
+    },
+    "spearman_within": {
+     "value": 0.088914,
+     "value_low": 0.023224,
+     "value_high": 0.151747,
+     "gain": 0.088914,
+     "gain_low": 0.023224,
+     "gain_high": 0.151747,
+     "videos": 5411,
+     "creators": 38
+    },
+    "roc_auc": {
+     "value": 0.6314,
+     "value_low": 0.587391,
+     "value_high": 0.667426,
+     "gain": 0.1314,
+     "gain_low": 0.087391,
+     "gain_high": 0.167426,
+     "videos": 5411,
+     "creators": 38
+    },
+    "pr_auc": {
+     "value": 0.361261,
+     "value_low": 0.298288,
+     "value_high": 0.424531,
+     "gain": 0.127663,
+     "gain_low": 0.078055,
+     "gain_high": 0.183917,
+     "videos": 5411,
+     "creators": 38
+    },
+    "top_decile_share": {
+     "value": 0.339229,
+     "value_low": 0.258727,
+     "value_high": 0.423689,
+     "gain": 0.110988,
+     "gain_low": 0.043289,
+     "gain_high": 0.184177,
+     "videos": 5411,
+     "creators": 38
+    }
+   },
+   "4B ridge": {
+    "MAE": {
+     "value": 0.365343,
+     "value_low": 0.330793,
+     "value_high": 0.40326,
+     "gain": 0.00984,
+     "gain_low": 0.004621,
+     "gain_high": 0.015317,
+     "videos": 5411,
+     "creators": 38
+    },
+    "skill": {
+     "value": 0.064502,
+     "value_low": 0.03358,
+     "value_high": 0.094004,
+     "gain": 0.064502,
+     "gain_low": 0.03358,
+     "gain_high": 0.094004,
+     "videos": 5411,
+     "creators": 38
+    },
+    "spearman_within": {
+     "value": 0.250593,
+     "value_low": 0.204399,
+     "value_high": 0.297148,
+     "gain": 0.250593,
+     "gain_low": 0.204399,
+     "gain_high": 0.297148,
+     "videos": 5411,
+     "creators": 38
+    },
+    "roc_auc": {
+     "value": 0.579203,
+     "value_low": 0.548164,
+     "value_high": 0.611482,
+     "gain": 0.079203,
+     "gain_low": 0.048164,
+     "gain_high": 0.111482,
+     "videos": 5411,
+     "creators": 38
+    },
+    "pr_auc": {
+     "value": 0.283355,
+     "value_low": 0.239774,
+     "value_high": 0.334623,
+     "gain": 0.049756,
+     "gain_low": 0.027607,
+     "gain_high": 0.082866,
+     "videos": 5411,
+     "creators": 38
+    },
+    "top_decile_share": {
+     "value": 0.354005,
+     "value_low": 0.267841,
+     "value_high": 0.444114,
+     "gain": 0.125764,
+     "gain_low": 0.05933,
+     "gain_high": 0.193064,
+     "videos": 5411,
+     "creators": 38
+    }
+   },
+   "image ridge": {
+    "MAE": {
+     "value": 0.364576,
+     "value_low": 0.330672,
+     "value_high": 0.402213,
+     "gain": 0.010608,
+     "gain_low": 0.004602,
+     "gain_high": 0.016783,
+     "videos": 5411,
+     "creators": 38
+    },
+    "skill": {
+     "value": 0.07048,
+     "value_low": 0.037058,
+     "value_high": 0.09722,
+     "gain": 0.07048,
+     "gain_low": 0.037058,
+     "gain_high": 0.09722,
+     "videos": 5411,
+     "creators": 38
+    },
+    "spearman_within": {
+     "value": 0.247337,
+     "value_low": 0.198772,
+     "value_high": 0.294915,
+     "gain": 0.247337,
+     "gain_low": 0.198772,
+     "gain_high": 0.294915,
+     "videos": 5411,
+     "creators": 38
+    },
+    "roc_auc": {
+     "value": 0.581854,
+     "value_low": 0.552894,
+     "value_high": 0.613621,
+     "gain": 0.081854,
+     "gain_low": 0.052894,
+     "gain_high": 0.113621,
+     "videos": 5411,
+     "creators": 38
+    },
+    "pr_auc": {
+     "value": 0.286906,
+     "value_low": 0.242772,
+     "value_high": 0.338914,
+     "gain": 0.053308,
+     "gain_low": 0.031393,
+     "gain_high": 0.088128,
+     "videos": 5411,
+     "creators": 38
+    },
+    "top_decile_share": {
+     "value": 0.341602,
+     "value_low": 0.258782,
+     "value_high": 0.432074,
+     "gain": 0.113361,
+     "gain_low": 0.054127,
+     "gain_high": 0.176023,
+     "videos": 5411,
+     "creators": 38
+    }
+   },
+   "combined": {
+    "MAE": {
+     "value": 0.360367,
+     "value_low": 0.326266,
+     "value_high": 0.398675,
+     "gain": 0.014816,
+     "gain_low": 0.003468,
+     "gain_high": 0.023738,
+     "videos": 5411,
+     "creators": 38
+    },
+    "skill": {
+     "value": 0.119359,
+     "value_low": 0.084156,
+     "value_high": 0.142007,
+     "gain": 0.119359,
+     "gain_low": 0.084156,
+     "gain_high": 0.142007,
+     "videos": 5411,
+     "creators": 38
+    },
+    "spearman_within": {
+     "value": 0.266968,
+     "value_low": 0.212028,
+     "value_high": 0.321291,
+     "gain": 0.266968,
+     "gain_low": 0.212028,
+     "gain_high": 0.321291,
+     "videos": 5411,
+     "creators": 38
+    },
+    "roc_auc": {
+     "value": 0.64941,
+     "value_low": 0.611303,
+     "value_high": 0.683644,
+     "gain": 0.14941,
+     "gain_low": 0.111303,
+     "gain_high": 0.183644,
+     "videos": 5411,
+     "creators": 38
+    },
+    "pr_auc": {
+     "value": 0.387031,
+     "value_low": 0.313879,
+     "value_high": 0.452502,
+     "gain": 0.153433,
+     "gain_low": 0.099178,
+     "gain_high": 0.204966,
+     "videos": 5411,
+     "creators": 38
+    },
+    "top_decile_share": {
+     "value": 0.361028,
+     "value_low": 0.266269,
+     "value_high": 0.459817,
+     "gain": 0.132788,
+     "gain_low": 0.063043,
+     "gain_high": 0.206186,
+     "videos": 5411,
+     "creators": 38
+    }
+   },
+   "has_video (a LEAK, not a model)": {
+    "MAE": {
+     "value": 0.362127,
+     "value_low": 0.322549,
+     "value_high": 0.400866,
+     "gain": 0.013056,
+     "gain_low": 0.001467,
+     "gain_high": 0.028189,
+     "videos": 5411,
+     "creators": 38
+    },
+    "skill": {
+     "value": 0.059419,
+     "value_low": 0.003453,
+     "value_high": 0.121447,
+     "gain": 0.059419,
+     "gain_low": 0.003453,
+     "gain_high": 0.121447,
+     "videos": 5411,
+     "creators": 38
+    },
+    "spearman_within": {
+     "value": 0.531323,
+     "value_low": 0.432053,
+     "value_high": 0.631769,
+     "gain": 0.531323,
+     "gain_low": 0.432053,
+     "gain_high": 0.631769,
+     "videos": 5411,
+     "creators": 38
+    },
+    "roc_auc": {
+     "value": 0.640304,
+     "value_low": 0.593415,
+     "value_high": 0.717416,
+     "gain": 0.140304,
+     "gain_low": 0.093415,
+     "gain_high": 0.217416,
+     "videos": 5411,
+     "creators": 38
+    },
+    "pr_auc": {
+     "value": 0.309692,
+     "value_low": 0.276939,
+     "value_high": 0.377999,
+     "gain": 0.076093,
+     "gain_low": 0.043847,
+     "gain_high": 0.146821,
+     "videos": 5411,
+     "creators": 38
+    },
+    "top_decile_share": {
+     "value": 0.516563,
+     "value_low": 0.418601,
+     "value_high": 0.618357,
+     "gain": 0.288323,
+     "gain_low": 0.205659,
+     "gain_high": 0.378134,
+     "videos": 5411,
+     "creators": 38
+    }
+   }
+  }
+ },
+ "claims": {
+  "The final model beats zero lift": {
+   "model": "combined",
+   "base": "B0 zero lift",
+   "rows": "all",
+   "validation": {
+    "seen": {
+     "value": 0.352788,
+     "value_low": 0.329559,
+     "value_high": 0.377686,
+     "gain": 0.015921,
+     "gain_low": 0.010795,
+     "gain_high": 0.020591,
+     "videos": 13646,
+     "creators": 138
+    }
+   },
+   "test": {
+    "seen": {
+     "value": 0.359518,
+     "value_low": 0.338231,
+     "value_high": 0.383794,
+     "gain": 0.015676,
+     "gain_low": 0.010857,
+     "gain_high": 0.020952,
+     "videos": 12455,
+     "creators": 138
+    },
+    "seen, no reposts": {
+     "value": 0.359659,
+     "value_low": 0.338361,
+     "value_high": 0.384046,
+     "gain": 0.01566,
+     "gain_low": 0.010803,
+     "gain_high": 0.021012,
+     "videos": 12409,
+     "creators": 138
+    },
+    "unseen": {
+     "value": 0.365048,
+     "value_low": 0.333246,
+     "value_high": 0.394894,
+     "gain": 0.012343,
+     "gain_low": 0.006866,
+     "gain_high": 0.018137,
+     "videos": 9285,
+     "creators": 81
+    }
+   },
+   "holds": true,
+   "holds unseen": true
+  },
+  "Metadata beats zero lift": {
+   "model": "B3 ridge",
+   "base": "B0 zero lift",
+   "rows": "all",
+   "validation": {
+    "seen": {
+     "value": 0.368056,
+     "value_low": 0.340845,
+     "value_high": 0.395688,
+     "gain": 0.000653,
+     "gain_low": 0.000248,
+     "gain_high": 0.001125,
+     "videos": 13646,
+     "creators": 138
+    }
+   },
+   "test": {
+    "seen": {
+     "value": 0.374681,
+     "value_low": 0.350787,
+     "value_high": 0.400798,
+     "gain": 0.000513,
+     "gain_low": 3.9e-05,
+     "gain_high": 0.001066,
+     "videos": 12455,
+     "creators": 138
+    },
+    "seen, no reposts": {
+     "value": 0.37481,
+     "value_low": 0.350879,
+     "value_high": 0.401163,
+     "gain": 0.000508,
+     "gain_low": 3.9e-05,
+     "gain_high": 0.001064,
+     "videos": 12409,
+     "creators": 138
+    },
+    "unseen": {
+     "value": 0.377075,
+     "value_low": 0.342255,
+     "value_high": 0.410767,
+     "gain": 0.000316,
+     "gain_low": -0.00022,
+     "gain_high": 0.000859,
+     "videos": 9285,
+     "creators": 81
+    }
+   },
+   "holds": true,
+   "holds unseen": false
+  },
+  "The words add to the metadata": {
+   "model": "4B ridge",
+   "base": "B3 ridge",
+   "rows": "all",
+   "validation": {
+    "seen": {
+     "value": 0.358323,
+     "value_low": 0.334362,
+     "value_high": 0.383576,
+     "gain": 0.009734,
+     "gain_low": 0.006169,
+     "gain_high": 0.013343,
+     "videos": 13646,
+     "creators": 138
+    }
+   },
+   "test": {
+    "seen": {
+     "value": 0.364873,
+     "value_low": 0.342303,
+     "value_high": 0.391194,
+     "gain": 0.009809,
+     "gain_low": 0.006247,
+     "gain_high": 0.013255,
+     "videos": 12455,
+     "creators": 138
+    },
+    "seen, no reposts": {
+     "value": 0.364989,
+     "value_low": 0.342385,
+     "value_high": 0.391372,
+     "gain": 0.009821,
+     "gain_low": 0.006242,
+     "gain_high": 0.01328,
+     "videos": 12409,
+     "creators": 138
+    },
+    "unseen": {
+     "value": 0.370694,
+     "value_low": 0.337607,
+     "value_high": 0.402001,
+     "gain": 0.00638,
+     "gain_low": 0.002902,
+     "gain_high": 0.010049,
+     "videos": 9285,
+     "creators": 81
+    }
+   },
+   "holds": true,
+   "holds unseen": true
+  },
+  "Recent form adds to the metadata and the words": {
+   "model": "combined",
+   "base": "4B ridge",
+   "rows": "all",
+   "validation": {
+    "seen": {
+     "value": 0.352788,
+     "value_low": 0.329559,
+     "value_high": 0.377686,
+     "gain": 0.005535,
+     "gain_low": 0.003249,
+     "gain_high": 0.007962,
+     "videos": 13646,
+     "creators": 138
+    }
+   },
+   "test": {
+    "seen": {
+     "value": 0.359518,
+     "value_low": 0.338231,
+     "value_high": 0.383794,
+     "gain": 0.005354,
+     "gain_low": 0.002739,
+     "gain_high": 0.008569,
+     "videos": 12455,
+     "creators": 138
+    },
+    "seen, no reposts": {
+     "value": 0.359659,
+     "value_low": 0.338361,
+     "value_high": 0.384046,
+     "gain": 0.00533,
+     "gain_low": 0.002711,
+     "gain_high": 0.008561,
+     "videos": 12409,
+     "creators": 138
+    },
+    "unseen": {
+     "value": 0.365048,
+     "value_low": 0.333246,
+     "value_high": 0.394894,
+     "gain": 0.005646,
+     "gain_low": 0.002536,
+     "gain_high": 0.008775,
+     "videos": 9285,
+     "creators": 81
+    }
+   },
+   "holds": true,
+   "holds unseen": true
+  },
+  "The frame adds to the metadata and the words": {
+   "model": "image ridge",
+   "base": "4B ridge",
+   "rows": "with a frame",
+   "validation": {
+    "seen": {
+     "value": 0.357977,
+     "value_low": 0.334191,
+     "value_high": 0.38328,
+     "gain": 0.000328,
+     "gain_low": -0.000159,
+     "gain_high": 0.000758,
+     "videos": 13645,
+     "creators": 138
+    }
+   },
+   "test": {
+    "seen": {
+     "value": 0.364516,
+     "value_low": 0.342102,
+     "value_high": 0.39071,
+     "gain": 0.00038,
+     "gain_low": -0.000215,
+     "gain_high": 0.000902,
+     "videos": 12454,
+     "creators": 138
+    },
+    "seen, no reposts": {
+     "value": 0.364646,
+     "value_low": 0.342168,
+     "value_high": 0.390881,
+     "gain": 0.000367,
+     "gain_low": -0.000225,
+     "gain_high": 0.000897,
+     "videos": 12408,
+     "creators": 138
+    },
+    "unseen": {
+     "value": 0.370284,
+     "value_low": 0.3377,
+     "value_high": 0.400741,
+     "gain": 0.00041,
+     "gain_low": -0.000597,
+     "gain_high": 0.00144,
+     "videos": 9285,
+     "creators": 81
+    }
+   },
+   "holds": false,
+   "holds unseen": false
+  }
+ },
+ "ablation": {
+  "combiner": "stacked",
+  "rows": "validation, seen creators",
+  "subsets": {
+   "nothing (zero lift)": {
+    "value": 0.368709,
+    "value_low": 0.341378,
+    "value_high": 0.396584,
+    "gain": -0.015921,
+    "gain_low": -0.020591,
+    "gain_high": -0.010795,
+    "videos": 13646,
+    "creators": 138
+   },
+   "B3": {
+    "value": 0.368225,
+    "value_low": 0.340863,
+    "value_high": 0.395978,
+    "gain": -0.015437,
+    "gain_low": -0.020097,
+    "gain_high": -0.010252,
+    "videos": 13646,
+    "creators": 138
+   },
+   "the words": {
+    "value": 0.359321,
+    "value_low": 0.335389,
+    "value_high": 0.38472,
+    "gain": -0.006533,
+    "gain_low": -0.008758,
+    "gain_high": -0.004501,
+    "videos": 13646,
+    "creators": 138
+   },
+   "recent form": {
+    "value": 0.364992,
+    "value_low": 0.33837,
+    "value_high": 0.392467,
+    "gain": -0.012205,
+    "gain_low": -0.016595,
+    "gain_high": -0.007731,
+    "videos": 13646,
+    "creators": 138
+   },
+   "B3 + the words": {
+    "value": 0.358885,
+    "value_low": 0.334945,
+    "value_high": 0.384234,
+    "gain": -0.006097,
+    "gain_low": -0.008425,
+    "gain_high": -0.003943,
+    "videos": 13646,
+    "creators": 138
+   },
+   "B3 + recent form": {
+    "value": 0.364223,
+    "value_low": 0.337588,
+    "value_high": 0.391576,
+    "gain": -0.011435,
+    "gain_low": -0.015725,
+    "gain_high": -0.006985,
+    "videos": 13646,
+    "creators": 138
+   },
+   "the words + recent form": {
+    "value": 0.353505,
+    "value_low": 0.330673,
+    "value_high": 0.378344,
+    "gain": -0.000718,
+    "gain_low": -0.001279,
+    "gain_high": -0.000229,
+    "videos": 13646,
+    "creators": 138
+   },
+   "B3 + the words + recent form": {
+    "value": 0.352788,
+    "value_low": 0.329559,
+    "value_high": 0.377686,
+    "gain": 0.0,
+    "gain_low": 0.0,
+    "gain_high": 0.0,
+    "videos": 13646,
+    "creators": 138
+   }
+  }
+ },
+ "slices": {
+  "Creator size (median views before the test)": {
+   "under 23k": {
+    "value": 0.366627,
+    "value_low": 0.348915,
+    "value_high": 0.394634,
+    "gain": 0.010876,
+    "gain_low": 0.000406,
+    "gain_high": 0.018867,
+    "videos": 5051,
+    "creators": 35
+   },
+   "23k to 99k": {
+    "value": 0.349442,
+    "value_low": 0.316725,
+    "value_high": 0.390303,
+    "gain": 0.01802,
+    "gain_low": 0.008093,
+    "gain_high": 0.030318,
+    "videos": 2104,
+    "creators": 34
+   },
+   "99k to 508k": {
+    "value": 0.370036,
+    "value_low": 0.308281,
+    "value_high": 0.435632,
+    "gain": 0.02032,
+    "gain_low": 0.012861,
+    "gain_high": 0.031834,
+    "videos": 3885,
+    "creators": 34
+   },
+   "over 508k": {
+    "value": 0.320252,
+    "value_low": 0.293044,
+    "value_high": 0.353658,
+    "gain": 0.016577,
+    "gain_low": 0.008335,
+    "gain_high": 0.024478,
+    "videos": 1415,
+    "creators": 35
+   }
+  },
+  "Video length": {
+   "under 10 s": {
+    "value": 0.363678,
+    "value_low": 0.344644,
+    "value_high": 0.38591,
+    "gain": 0.016812,
+    "gain_low": 0.0115,
+    "gain_high": 0.022568,
+    "videos": 4590,
+    "creators": 100
+   },
+   "10 to 20 s": {
+    "value": 0.348415,
+    "value_low": 0.325014,
+    "value_high": 0.374314,
+    "gain": 0.014544,
+    "gain_low": 0.00841,
+    "gain_high": 0.021429,
+    "videos": 4134,
+    "creators": 121
+   },
+   "20 to 40 s": {
+    "value": 0.357863,
+    "value_low": 0.320271,
+    "value_high": 0.407891,
+    "gain": 0.015135,
+    "gain_low": 0.003515,
+    "gain_high": 0.027184,
+    "videos": 2570,
+    "creators": 123
+   },
+   "40 to 60 s": {
+    "value": 0.388841,
+    "value_low": 0.339635,
+    "value_high": 0.444647,
+    "gain": 0.016201,
+    "gain_low": 0.006009,
+    "gain_high": 0.028075,
+    "videos": 1116,
+    "creators": 103
+   },
+   "over 60 s": {
+    "value": 0.322601,
+    "value_low": 0.25693,
+    "value_high": 0.407197,
+    "gain": 0.021821,
+    "gain_low": -0.015654,
+    "gain_high": 0.060012,
+    "videos": 45,
+    "creators": 24
+   }
+  },
+  "Talking or not": {
+   "talking": {
+    "value": 0.361203,
+    "value_low": 0.336867,
+    "value_high": 0.389702,
+    "gain": 0.016709,
+    "gain_low": 0.011045,
+    "gain_high": 0.022877,
+    "videos": 9655,
+    "creators": 138
+   },
+   "text on screen, no speech": {
+    "value": 0.357213,
+    "value_low": 0.334425,
+    "value_high": 0.383032,
+    "gain": 0.013911,
+    "gain_low": 0.00795,
+    "gain_high": 0.019291,
+    "videos": 2270,
+    "creators": 94
+   },
+   "neither": {
+    "value": 0.338704,
+    "value_low": 0.310501,
+    "value_high": 0.3832,
+    "gain": 0.004427,
+    "gain_low": -0.002427,
+    "gain_high": 0.015126,
+    "videos": 530,
+    "creators": 77
+   }
+  },
+  "Earlier videos in the library": {
+   "under 100": {
+    "value": 0.419134,
+    "value_low": 0.322302,
+    "value_high": 0.516961,
+    "gain": 0.034319,
+    "gain_low": -0.021214,
+    "gain_high": 0.073408,
+    "videos": 169,
+    "creators": 14
+   },
+   "100 to 300": {
+    "value": 0.360255,
+    "value_low": 0.31835,
+    "value_high": 0.406917,
+    "gain": 0.006948,
+    "gain_low": -0.004446,
+    "gain_high": 0.020434,
+    "videos": 652,
+    "creators": 29
+   },
+   "300 to 1,000": {
+    "value": 0.350652,
+    "value_low": 0.326084,
+    "value_high": 0.37708,
+    "gain": 0.01121,
+    "gain_low": 0.004873,
+    "gain_high": 0.018089,
+    "videos": 5057,
+    "creators": 64
+   },
+   "1,000 or more": {
+    "value": 0.364731,
+    "value_low": 0.329099,
+    "value_high": 0.412573,
+    "gain": 0.019497,
+    "gain_low": 0.013515,
+    "gain_high": 0.027263,
+    "videos": 6577,
+    "creators": 43
+   }
+  }
+ },
+ "stage1": {
+  "source": "notebooks/01_eda_target.ipynb",
+  "creator_variance_share": 0.38,
+  "drift_factor": 4.7,
+  "settled_rate_change": -0.016,
+  "kept_above_median": 0.638,
+  "retired_above_median": 0.433
+ },
+ "frozen": {
+  "settings": {
+   "B3 ridge alpha": 0.1,
+   "words alpha": 100,
+   "recent form half-life": 20,
+   "4B logistic C": 0.1,
+   "image ridge alpha": 300,
+   "folds": 5,
+   "seed": 2026,
+   "draws": 2000
+  },
+  "combined": {
+   "combiner": "stacked",
+   "weights": {
+    "intercept": 0.023767,
+    "B3": 0.609643,
+    "the words": 1.023353,
+    "recent form": 0.94276,
+    "no recent form": 0.005841
+   }
+  },
+  "final model": "combined",
+  "test models": [
+   "B0 zero lift",
+   "B3 ridge",
+   "B1 recent form",
+   "4B ridge",
+   "image ridge",
+   "combined",
+   "4B logistic"
+  ],
+  "validation fingerprints": {
+   "B0 zero lift": {
+    "sum": 0.0,
+    "MAE": 0.371232
+   },
+   "B3 ridge": {
+    "sum": -129.9024,
+    "MAE": 0.370624
+   },
+   "B1 recent form": {
+    "sum": -507.0268,
+    "MAE": 0.369294
+   },
+   "4B ridge": {
+    "sum": 204.0883,
+    "MAE": 0.361031
+   },
+   "image ridge": {
+    "sum": 295.5728,
+    "MAE": 0.360631
+   },
+   "combined": {
+    "sum": 297.1035,
+    "MAE": 0.355875
+   },
+   "4B logistic": {
+    "sum": -23785.3735
+   }
+  }
+ }
+}

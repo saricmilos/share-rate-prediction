@@ -100,7 +100,7 @@ def render(r: dict) -> str:
         "",
         "Each row is one model's gain over the model before it, in MAE, seen creators unless the column says otherwise.",
         "",
-        "| Claim | Model over base | Validation, seen | Test, seen | Test, seen, no reposts | Test, unseen | Holds on test |",
+        "| Claim | Model over base | Validation, seen | Test, seen | Test, seen, no reposts | Test, unseen | Holds on test (seen / unseen) |",
         "|---|---|---|---|---|---|---|",
     ]
     for name, c in claims.items():
@@ -108,7 +108,7 @@ def render(r: dict) -> str:
         lines.append(
             f"| {name} | {c['model']} over {c['base']}{' (rows with a frame)' if c.get('rows') == 'with a frame' else ''} | "
             f"{gain(c['validation']['seen'])} | {gain(t['seen'])} | {gain(t['seen, no reposts'])} | {gain(t['unseen'])} | "
-            f"{'yes' if c['holds'] else 'no'} |")
+            f"{'yes' if c['holds'] else 'no'} / {'yes' if c['holds unseen'] else 'no'} |")
     lines += ["", "### Every model on the test", ""]
     for g, label in [("seen", "Creators the model trained on"), ("unseen", "Creators it never saw")]:
         rows = test[g]

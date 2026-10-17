@@ -18,7 +18,7 @@ def _results():
     by_model = {m: {"MAE": _score(0.37, 0.01 * i), "spearman_within": _score(0.2, 0.1)} for i, m in enumerate(models)}
     claim = {"base": "4B ridge", "model": "combined", "validation": {"seen": _score(0.36, 0.002)},
              "test": {"seen": _score(0.36, 0.0021), "seen, no reposts": _score(0.36, 0.0022),
-                      "unseen": _score(0.37, 0.001)}, "holds": True}
+                      "unseen": _score(0.37, 0.001)}, "holds": True, "holds unseen": False}
     return {
         "about": {"notebook": "notebooks/05_results.ipynb", "draws": 2_000, "seed": 2026, "min_creators": 5},
         "data": {"videos": 143_489, "creators": 231, "breakout_rate": 0.2412, "test_period": "the test period"},
