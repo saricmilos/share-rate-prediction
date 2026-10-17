@@ -1,0 +1,61 @@
+{
+ "settings": {
+  "B3 ridge alpha": 0.1,
+  "words alpha": 100,
+  "recent form half-life": 20,
+  "4B logistic C": 0.1,
+  "image ridge alpha": 300,
+  "folds": 5,
+  "seed": 2026,
+  "draws": 2000
+ },
+ "combined": {
+  "combiner": "stacked",
+  "weights": {
+   "intercept": 0.023767,
+   "B3": 0.609643,
+   "the words": 1.023353,
+   "recent form": 0.94276,
+   "no recent form": 0.005841
+  }
+ },
+ "final model": "combined",
+ "test models": [
+  "B0 zero lift",
+  "B3 ridge",
+  "B1 recent form",
+  "4B ridge",
+  "image ridge",
+  "combined",
+  "4B logistic"
+ ],
+ "validation fingerprints": {
+  "B0 zero lift": {
+   "sum": 0.0,
+   "MAE": 0.371232
+  },
+  "B3 ridge": {
+   "sum": -129.9024,
+   "MAE": 0.370624
+  },
+  "B1 recent form": {
+   "sum": -507.0268,
+   "MAE": 0.369294
+  },
+  "4B ridge": {
+   "sum": 204.0883,
+   "MAE": 0.361031
+  },
+  "image ridge": {
+   "sum": 295.5728,
+   "MAE": 0.360631
+  },
+  "combined": {
+   "sum": 297.1035,
+   "MAE": 0.355875
+  },
+  "4B logistic": {
+   "sum": -23785.3735
+  }
+ }
+}
