@@ -1,6 +1,12 @@
 # Will it be shared?
 
-Can you tell from a short video alone, before it is posted, whether people will share it?
+Can you tell from a short video alone, before it is posted, whether it will be shared more than its creator's usual?
+I tested my model once, on the newest 21,740 TikTok videos, after every choice was frozen. For creators it trained
+on, it cuts the error of "as usual" by 4.2%: 0.0157 log10 [0.0109, 0.0210], a 95% interval from resampling creators
+(3.3% for creators it never saw). Small as an error, useful as a ranking: of each creator's top tenth by the model,
+43.5% broke out (twice the creator's median), against 25.3% for a random pick. The gain comes from what the video
+says and how the creator has been doing lately. The first frame adds nothing (0.0004 [−0.0002, 0.0009]), so no image
+model was fine-tuned and the final model reads no pixels.
 
 ## The data
 
@@ -14,18 +20,23 @@ content platform. 156,000 of the TikTok videos have counts, fetched between July
 - **Text from my labelling pipeline:** the spoken transcript and its English translation (Whisper), on-screen
   text and a scene description (Qwen2.5-VL), and a hook / body / payoff split of the script.
 
-The videos and frames are other creators' work, so they stay on my disk. This repo publishes code, metrics and
-plots only.
+The videos and frames are other creators' work, so they stay on my disk. This repo publishes code, metrics and plots
+only. The code is MIT-licensed ([LICENSE](LICENSE)). The data is not in the repo and is not licensed.
 
 ## Run it
 
+The data isn't public: the videos and their text are other creators' work. Without it, a clone runs the tests (those
+that need `data/` skip, saying why) and shows every notebook with its saved outputs. With my platform's databases on
+disk, the export comes first.
+
 ```bash
 python scripts/export_snapshot.py               # standard library only
-py -3.11 -m venv .venv                          # then, for the analysis:
+py -3.11 -m venv .venv                          # then, for the analysis (macOS or Linux: python3.11 -m venv .venv)
 .venv/Scripts/activate                          # Windows; on macOS or Linux: source .venv/bin/activate
 pip install torch --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt
 python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('BAAI/bge-small-en-v1.5')"
+pytest                                          # the tests that need data/ skip, saying why
 jupyter lab
 ```
 
