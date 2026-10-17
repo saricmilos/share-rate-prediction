@@ -50,6 +50,10 @@ Notebook 04_image reads embeddings made on a rented GPU: [docs/gpu.md](docs/gpu.
 they cost (about 3 hours and $1 on 2× RTX 3090). The vectors go into `data/embeddings/` and `data/image_embeddings/`
 (about 3 GB, not in git).
 
+Notebook 05 reads the same embeddings, the test's among them, and opens the test split once. It writes
+`reports/results.json` and `reports/results.md`, and it stops if any model differs from the choices in
+`reports/frozen.json`, which were written before the test was opened.
+
 ## Traps to handle before any model
 
 1. **Channel size.** Big channels get big numbers. The target is share rate (shares per 1,000 views) compared
@@ -88,8 +92,39 @@ Every model has to beat the one above it, on the same split.
 | 2. Baselines | The creator's own history; length and posting hour | Done: [notebook](notebooks/02_baselines.ipynb). Only metadata (in effect, length) beats zero lift, by 0.2% |
 | 3. Text | The caption, transcript, on-screen text and scene description, as counted words and as sentence embeddings | Done: [notebook](notebooks/03_text.ipynb). The words add to the baseline: sentence embeddings cut its error by 2.2% |
 | 4. Image | The first frame through a pretrained image model (SigLIP 2), and a larger text encoder (Qwen3-Embedding-4B), both on a rented GPU; fine-tuning only if the frozen frame model earns it | Done: [frames](notebooks/04_frames.ipynb), [models](notebooks/04_image.ipynb). The frame adds nothing beyond the creator and the words; the larger text encoder cuts the error by 2.6% |
-| 5. Combined | The baseline, the words and the creator's recent form together, then the test split, once | |
-| 6. Demo | A FastAPI `/predict` endpoint in Docker | |
+| 5. Combined | The baseline, the words and the creator's recent form together, then the test split, once | Done: [notebook](notebooks/05_results.ipynb), [results](reports/results.md). On the test, the three together cut zero lift's error by 4.2% for creators the model trained on and 3.3% for creators it never saw |
+| 6. The page | A static page on saricmilos.com, built by one command from `reports/results.json` and from aggregates over at least 5 creators: the findings with their intervals, and one thing to touch that runs in the visitor's browser with no server | |
+
+## The result
+
+On the test split, opened once after every choice was frozen (`reports/frozen.json`): 21,740 videos posted from April
+to September 2026. Each gain has a 95% interval from 2,000 resamples of creators; every number is in
+[reports/results.md](reports/results.md).
+
+- **For creators the model trained on,** predicting zero lift ("every video does as well as its creator's recent
+  median") misses by 0.3752 log10, a factor of 2.37 either way. The final model, which reads the video's length, what it
+  says and how the creator has been doing lately, misses by 0.3595: 0.0157 [0.0109, 0.0210] better, an error 4.2%
+  smaller.
+- **For creators it never saw,** 0.0123 [0.0069, 0.0181] better, 3.3%.
+- **It ranks a creator's videos.** Of each creator's top tenth by the model, 43.5% broke out (at least twice the
+  creator's median), against 25.3% for a random pick.
+- **Validation priced it right.** Every stage's gain on the test is within 0.0002 of its gain on validation.
+
+## Five findings, and what each changed
+
+1. **The creator explains 38% of the variance in log share rate.** So the target is lift, each video against its own
+   creator's recent median, and creators the model trained on are reported apart from creators it never saw.
+2. **Share rate drifted 4.7× inside the same creators between 2022 and 2026.** So the baseline is the median of the
+   creator's last 30 settled videos, the splits are by time, and the test is the newest videos.
+3. **The platform keeps each channel's winners:** kept clips beat their creator's median 64% of the time, retired ones
+   43%, and whether a clip's file still exists beats the final honest model on validation (0.0191 against 0.0159 over
+   zero lift). So no file column is ever a feature, every frame comes out of the platform's own poster code, and every
+   model is checked for finding kept clips.
+4. **A first frame names its creator 65% of the time and adds nothing beyond the words** (on the test, 0.0004
+   [−0.0002, 0.0009]). So nothing was fine-tuned, no second GPU was rented, and the final model has no pixels.
+5. **Recent form misses alone, and next to the words it carries a third of the final gain** (0.0054 [0.0027, 0.0086] on
+   the test, for unseen creators too). So the final model stacks the creator's recent run with what the video says. Of
+   the two, only the words are the creator's to change before posting.
 
 ## What stage 1 found
 
@@ -179,3 +214,27 @@ read).
 - **Not a leak.** Every frame came out of the platform's own poster code (a classifier can't tell a frame from a
   poster: ROC-AUC 0.500), and given a clip's lift, no image model's correction knows whether the platform kept the
   clip.
+
+## What stage 5 found
+
+On the test unless it says validation, each gain with a 95% interval from 2,000 resamples of creators.
+
+- **Everything together beats every part.** The three parts are stacked by least squares on what each predicts for
+  training videos it never saw (folds by creator). On top of the metadata, the words add 0.0098 [0.0062, 0.0133], and
+  the creator's recent form adds 0.0054 [0.0027, 0.0086] on top of both, for creators the model never saw too (0.0056).
+  The metadata adds 0.0005 over zero lift, by a hair.
+- **Recent form earns its place next to the words.** Alone it missed stage 2's bar. Next to the words the stack trusts
+  it almost fully (a weight of 0.94, the words' 1.02), and it lifts the Spearman correlation inside a creator from 0.244
+  to 0.303. The words say what the video is; recent form says how the creator has been doing lately.
+- **Two ways to combine, one answer.** A linear stack and a boosted model, both fixed before the run, tied on validation
+  to four decimals; the rule took the linear one.
+- **The frame still adds nothing:** 0.0004 [−0.0002, 0.0009] on top of the metadata and the words.
+- **Where it works:** evenly across video lengths and creator sizes; least for the smallest creators (2.9% of the error)
+  and for videos with neither speech nor text on screen (1.3%, an interval across 0); most for creators with long
+  histories (5.1%).
+- **Not a leak.** At the same lift the model rates the clips the platform kept lower, not higher (kept clips have higher
+  baselines at the same lift, and recent form subtracts the baseline), and it ranks videos among kept clips alone and
+  among retired clips alone.
+- **Still small.** The typical miss goes from a factor of 2.37 to 2.29. How a video does against its own creator's
+  recent median is mostly not predictable before it is posted; the part that is comes from what the video says and how
+  the creator has been doing.
