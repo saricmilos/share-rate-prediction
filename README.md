@@ -46,6 +46,10 @@ the training and validation videos once, 550,823 of them, which takes about 3.5 
 into `data/embeddings/` (about 820 MB, not in git). A run that stops keeps what it finished, and later runs only read
 the cache.
 
+Notebook 04_image reads embeddings made on a rented GPU: [docs/gpu.md](docs/gpu.md) has the kit, the commands and what
+they cost (about 3 hours and $1 on 2× RTX 3090). The vectors go into `data/embeddings/` and `data/image_embeddings/`
+(about 3 GB, not in git).
+
 ## Traps to handle before any model
 
 1. **Channel size.** Big channels get big numbers. The target is share rate (shares per 1,000 views) compared
@@ -83,8 +87,8 @@ Every model has to beat the one above it, on the same split.
 | 1. EDA and target | Share-rate distribution, per-creator normalisation, the age effect, the survivorship check | Done: [notebook](notebooks/01_eda_target.ipynb) |
 | 2. Baselines | The creator's own history; length and posting hour | Done: [notebook](notebooks/02_baselines.ipynb). Only metadata (in effect, length) beats zero lift, by 0.2% |
 | 3. Text | The caption, transcript, on-screen text and scene description, as counted words and as sentence embeddings | Done: [notebook](notebooks/03_text.ipynb). The words add to the baseline: sentence embeddings cut its error by 2.2% |
-| 4. Image | The poster frame through a pretrained image model, then fine-tuned on a rented GPU | |
-| 5. Combined | Frames and text together, every run logged in MLflow | |
+| 4. Image | The first frame through a pretrained image model (SigLIP 2), and a larger text encoder (Qwen3-Embedding-4B), both on a rented GPU; fine-tuning only if the frozen frame model earns it | Done: [frames](notebooks/04_frames.ipynb), [models](notebooks/04_image.ipynb). The frame adds nothing beyond the creator and the words; the larger text encoder cuts the error by 2.6% |
+| 5. Combined | The baseline, the words and the creator's recent form together, then the test split, once | |
 | 6. Demo | A FastAPI `/predict` endpoint in Docker | |
 
 ## What stage 1 found
@@ -153,3 +157,25 @@ creators. The test stays closed until stage 5.
 - **Not a leak.** Given a clip's lift, neither model's correction knows whether the platform kept the clip (TF-IDF
   −0.0025 [−0.0097, +0.0047]; the embeddings slightly below 0, the opposite of a detector). Both also rank videos
   among kept clips alone and among retired clips alone.
+
+## What stage 4 found
+
+All on validation, each gain with a 95% interval from 2,000 resamples of creators. The test stays closed until
+stage 5. One rented GPU (2× RTX 3090) made the embeddings in about 3.2 hours, for about $1 (estimated; the bill wasn't
+read).
+
+- **The first frame adds nothing beyond who made the video and what it says.** On top of the metadata ridge and the
+  text, the frame's embedding (SigLIP 2, frozen) changes the error by +0.0003 [−0.0002, +0.0008] in ridge and +0.0001
+  [−0.0007, +0.0010] in a small boosted model, and doesn't rank a creator's videos better either. Under the bar written
+  before the rental that's a miss, so the image model wasn't fine-tuned and the combined model leaves the pixels out.
+- **The frame knows whose video it is.** From the first frame alone, a linear model names the creator of a later video
+  65% of the time (top five: 88%), against 9% for always guessing the biggest creator. Lift is already measured
+  against the creator, so that knowledge is worth nothing here. Stage 3's picture signal, the scene description, was
+  mostly in the words already.
+- **A larger text encoder helps, by a little.** Qwen3-Embedding-4B in place of bge-small cuts the metadata ridge's
+  error by 0.0097 [0.0062, 0.0133], 2.6% (bge-small: 2.2%). Its edge over bge-small, 0.0015 [0.0002, 0.0027], holds
+  without the reposts, so under the bar written in stage 3 it replaces bge-small: over a hundred times the parameters,
+  for 0.4% of the error and no better ranking.
+- **Not a leak.** Every frame came out of the platform's own poster code (a classifier can't tell a frame from a
+  poster: ROC-AUC 0.500), and given a clip's lift, no image model's correction knows whether the platform kept the
+  clip.
