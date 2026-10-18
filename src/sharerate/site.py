@@ -171,14 +171,15 @@ def calculator(targets: pd.DataFrame) -> dict:
     inward). No 0th or 100th percentile: each would be one video's own number."""
     lift = targets.lift.to_numpy()
     creators = targets.username.to_numpy()
+
+    def bar(lo, hi):
+        """The videos and creators with lift from `lo` up to `hi`; None is an open end."""
+        rows = (lift >= (-np.inf if lo is None else lo)) & (lift < (np.inf if hi is None else hi))
+        return {"from": lo, "to": hi, "videos": int(rows.sum()), "creators": int(pd.Series(creators[rows]).nunique())}
+
     # Bars a tenth wide, one edge on the breakout line, so every bar is wholly a breakout or wholly not
-    edges = data.LOG2 + np.arange(-18, 13) * 0.1  # about -1.5 to +1.5
-    bins = []
-    for lo, hi in zip([-np.inf, *edges], [*edges, np.inf]):
-        rows = (lift >= lo) & (lift < hi)
-        bins.append({"from": None if np.isinf(lo) else float(lo), "to": None if np.isinf(hi) else float(hi),
-                     "videos": int(rows.sum()), "creators": int(pd.Series(creators[rows]).nunique())})
-    bins = _merge_sparse_ends(bins)
+    edges = [float(e) for e in data.LOG2 + np.arange(-18, 13) * 0.1]  # about -1.5 to +1.5
+    bins = _merge_sparse_ends([bar(lo, hi) for lo, hi in zip([None, *edges], [*edges, None])], bar)
     for b in bins:
         _group(range(b["videos"]), range(b["creators"]), f"lift from {b['from']} to {b['to']}")
     return {
@@ -192,16 +193,14 @@ def calculator(targets: pd.DataFrame) -> dict:
     }
 
 
-def _merge_sparse_ends(bins: list[dict]) -> list[dict]:
-    """Merge each end bar into its neighbour until it covers MIN_CREATORS creators. Creators are counted again on
-    the merged range by the caller's check, so a merge that still falls short stops the export."""
-    def merged(a, b):
-        return {"from": a["from"], "to": b["to"], "videos": a["videos"] + b["videos"],
-                "creators": max(a["creators"], b["creators"])}  # a lower bound; the true count is checked after
+def _merge_sparse_ends(bins: list[dict], bar) -> list[dict]:
+    """Merge each end bar into its neighbour until it covers MIN_CREATORS creators. `bar(lo, hi)` counts the merged
+    range's videos and creators again from the data, since a creator in both bars would be counted twice by a sum;
+    the caller's check then refuses any bar still short, so a merge that can't reach 5 creators stops the export."""
     while len(bins) > 2 and bins[0]["creators"] < MIN_CREATORS:
-        bins = [merged(bins[0], bins[1])] + bins[2:]
+        bins = [bar(bins[0]["from"], bins[1]["to"])] + bins[2:]
     while len(bins) > 2 and bins[-1]["creators"] < MIN_CREATORS:
-        bins = bins[:-2] + [merged(bins[-2], bins[-1])]
+        bins = bins[:-2] + [bar(bins[-2]["from"], bins[-1]["to"])]
     return bins
 
 

@@ -1,12 +1,12 @@
 # Will it be shared?
 
-Can you tell from a short video alone, before it is posted, whether it will be shared more than its creator's usual?
-I tested my model once, on the newest 21,740 TikTok videos, after every choice was frozen. For creators it trained
-on, it cuts the error of "as usual" by 4.2%: 0.0157 log10 [0.0109, 0.0210], a 95% interval from resampling creators
-(3.3% for creators it never saw). Small as an error, useful as a ranking: of each creator's top tenth by the model,
-43.5% broke out (twice the creator's median), against 25.3% for a random pick. The gain comes from what the video
-says and how the creator has been doing lately. The first frame adds nothing (0.0004 [−0.0002, 0.0009]), so no image
-model was fine-tuned and the final model reads no pixels.
+Can you tell before a short video is posted whether it will be shared more than its creator's usual, from the video
+and its creator's recent run? I tested my model once, on the newest 21,740 TikTok videos, after every choice was
+frozen. For creators it trained on, it cuts the error of "as usual" by 4.2%: 0.0157 log10 [0.0109, 0.0210], a 95%
+interval from resampling creators (3.3% for creators it never saw). Small as an error, useful as a ranking: of each
+creator's top tenth by the model, 43.5% broke out (twice the creator's median), against 25.3% for a random pick. The
+gain comes from what the video says and how the creator has been doing lately. The first frame adds nothing (0.0004
+[−0.0002, 0.0009]), so no image model was fine-tuned and the final model reads no pixels.
 
 ## The data
 
@@ -119,7 +119,7 @@ to September 2026. Each gain has a 95% interval from 2,000 resamples of creators
 - **For creators it never saw,** 0.0123 [0.0069, 0.0181] better, 3.3%.
 - **It ranks a creator's videos.** Of each creator's top tenth by the model, 43.5% broke out (at least twice the
   creator's median), against 25.3% for a random pick.
-- **Validation priced it right.** Every stage's gain on the test is within 0.0002 of its gain on validation.
+- **Validation priced it right.** Every claim's gain on the test is within 0.00025 of its gain on validation.
 
 ## Five findings, and what each changed
 

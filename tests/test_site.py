@@ -1,12 +1,16 @@
 """The site's export: nothing a creator wrote, no username or video id, and no group under 5 creators leaves.
 
 The first tests run anywhere: they plant a username, a video id, a caption and a small group in a fake export and
-check the scan finds each. The last one scans the files the export wrote into the site (SHARERATE_SITE), against every
-username, video id and text field in the snapshot, so it needs data/ and the site's folder, and skips without them.
+check the scan finds each, and build the calculator's histogram from made-up videos to check that a sparse end bar is
+merged and its creators counted again on the merged range. The last one scans the files the export wrote into the
+site (SHARERATE_SITE), against every username, video id and text field in the snapshot, so it needs data/ and the
+site's folder, and skips without them.
 """
 
 import json
 
+import numpy as np
+import pandas as pd
 import pytest
 
 from sharerate import data, site
@@ -54,6 +58,22 @@ def test_a_short_creator_text_is_not_a_quote(tmp_path):
 
 def test_a_group_under_five_creators_is_found(tmp_path):
     assert _scan(tmp_path, {"years": [{"year": 2019, "creators": 4, "videos": 300}]})
+
+
+def test_a_sparse_end_bar_is_merged_and_its_creators_counted_again():
+    # Ten made-up creators with a video every 0.01 of lift from -3 to 3, so every bar holds all ten; its edges come
+    # from the calculator itself
+    grid = np.round(np.arange(-3, 3, 0.01), 2)
+    dense = pd.DataFrame({"username": np.repeat([f"c{i}" for i in range(10)], len(grid)), "lift": np.tile(grid, 10)})
+    edges = [b["to"] for b in site.calculator(dense.assign(breakout=dense.lift >= data.LOG2))["bins"][:-1]]
+    # Below the second edge, three creators in the first bar and two others in the second: each is short of 5, the
+    # larger count is 3, and together they are 5, so the two merge into one bar and stop there
+    low = pd.DataFrame({"username": ["c0", "c1", "c2", "c3", "c4"],
+                        "lift": [edges[0] - 0.5] * 3 + [(edges[0] + edges[1]) / 2] * 2})
+    sparse = pd.concat([dense[dense.lift >= edges[1]], low], ignore_index=True)
+    bins = site.calculator(sparse.assign(breakout=sparse.lift >= data.LOG2))["bins"]
+    assert bins[0] == {"from": None, "to": edges[1], "videos": 5, "creators": 5}
+    assert len(bins) == len(edges)  # one bar fewer than the dense histogram's
 
 
 def test_the_site_export_holds_nothing_private():
