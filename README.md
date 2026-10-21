@@ -65,6 +65,11 @@ Notebook 05 reads the same embeddings, the test's among them, and opens the test
 `reports/results.json` and `reports/results.md`, and it stops if any model differs from the choices in
 `reports/frozen.json`, which were written before the test was opened.
 
+Stage 7 reads the platform's Instagram tables for my own account, read-only as well. `python -m sharerate.live status`
+counts the reels in the live test so far, and `python -m sharerate.live read` computes it, once, from its reading date
+on, writing `reports/live_result.json`. `python scripts/live_exploration.py` counts again what
+[docs/live-test.md](docs/live-test.md) says I saw before writing the bar.
+
 ## Traps to handle before any model
 
 1. **Channel size.** Big channels get big numbers. The target is share rate (shares per 1,000 views) compared
@@ -105,6 +110,7 @@ Every model has to beat the one above it, on the same split.
 | 4. Image | The first frame through a pretrained image model (SigLIP 2), and a larger text encoder (Qwen3-Embedding-4B), both on a rented GPU; fine-tuning only if the frozen frame model earns it | Done: [frames](notebooks/04_frames.ipynb), [models](notebooks/04_image.ipynb). The frame adds nothing beyond the creator and the words; the larger text encoder cuts the error by 2.6% |
 | 5. Combined | The baseline, the words and the creator's recent form together, then the test split, once | Done: [notebook](notebooks/05_results.ipynb), [results](reports/results.md). On the test, the three together cut zero lift's error by 4.2% for creators the model trained on and 3.3% for creators it never saw |
 | 6. The page | A static page on saricmilos.com, built by one command from `reports/results.json` and from aggregates over at least 5 creators: the findings with their intervals, and one thing to touch that runs in the visitor's browser with no server | |
+| 7. The live test | My own Instagram reels from 21 October 2026: does the share of viewers who swipe away in the first three seconds, read a day after posting, go with the views two weeks later? Instagram shows that rate only to the account's owner, so no public count holds it | Bar written before the first of these reels went up: [docs/live-test.md](docs/live-test.md), frozen in [reports/live_bar.json](reports/live_bar.json). Read once, 21 days after the 30th reel |
 
 ## The result
 

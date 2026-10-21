@@ -1,0 +1,51 @@
+{
+ "stage": 7,
+ "written": "2026-10-21",
+ "question": "On my own Instagram reels, does the share of viewers who swipe away in the first three seconds, read a day after posting, go with the views two weeks later?",
+ "set": {
+  "published from": "2026-10-20T22:00:00+00:00",
+  "reels": 30,
+  "posting deadline": "2027-01-10T23:00:00+00:00"
+ },
+ "readings": {
+  "day 1": {
+   "hours": 24,
+   "window hours": [18, 36],
+   "fields": ["views", "shares", "skip rate"]
+  },
+  "day 14": {
+   "days": 14,
+   "window days": [10, 21],
+   "fields": ["views", "shares"]
+  }
+ },
+ "statistic": "Spearman's rho between the skip rate at day 1 and the views at day 14, over the reels with both readings",
+ "interval": {
+  "method": "percentile bootstrap over reels",
+  "draws": 2000,
+  "seed": 2026,
+  "level": 0.95
+ },
+ "bar": {
+  "rho at most": -0.3,
+  "interval high below": 0,
+  "minimum reels": 20
+ },
+ "read": {
+  "days after the last reel": 21
+ },
+ "reported with no bar": [
+  "Pearson's r between the skip rate at day 1 and log10 views at day 14",
+  "partial Spearman between the skip rate at day 1 and the views at day 14, given the views at day 1",
+  "Spearman between shares per 1,000 views at day 1 and at day 14"
+ ],
+ "before the bar": {
+  "counted with": "scripts/live_exploration.py, on reels and Shorts posted before the set",
+  "instagram reels, skip rate against log views at the last snapshot, 3 days or more after posting": {"reels": 27, "pearson": -0.72},
+  "instagram median views, skip under 40%": {"reels": 8, "views": 56924},
+  "instagram median views, skip 40% to 50%": {"reels": 18, "views": 5884},
+  "instagram reels, log share rate at about a day against 10 days or more": {"reels": 55, "pearson": 0.97},
+  "youtube shorts, audience watch ratio at 3 s against log views": {"shorts": 399, "pearson": 0.17},
+  "youtube shorts, relative retention at 3 s against log views": {"shorts": 399, "pearson": 0.3}
+ }
+}
